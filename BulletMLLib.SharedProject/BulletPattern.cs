@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -75,7 +76,7 @@ namespace BulletMLLib
         settings.ValidationEventHandler += MyValidationEventHandler;
 #endif
 
-        using (var reader = XmlReader.Create(xmlFileName, settings))
+        using (var reader = XmlReader.Create(new StringReader(xmlFileName), settings))
         {
           //Open the file.
           var xmlDoc = new XmlDocument();

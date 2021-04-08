@@ -1,28 +1,29 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using BulletMLLib;
 
 public class MoveManager : Node, IBulletManager
 {
-  [Export]
-  private float timeSpeed = 1.0f;
-  [Export]
-  private float scale = 1.0f;
+  [Export] private float timeSpeed = 1.0f;
+  [Export] private float scale = 1.0f;
       
-  private List<Mover> movers = new List<Mover>();
-  private List<Mover> topLevelMovers = new List<Mover>();
+  private readonly List<Mover> movers = new List<Mover>();
+  private readonly List<Mover> topLevelMovers = new List<Mover>();
 
-  public IEnumerable<Mover> Movers => movers;
-		
-  public override void _Ready()
+  private PositionDelegate GetPlayerPosition;
+
+  public MoveManager(PositionDelegate playerPosition)
   {
+    Debug.Assert(playerPosition != null);
+    GetPlayerPosition = playerPosition;
   }
 
-  public override void _Process(float delta)
+  public IEnumerable<Mover> Movers => movers;
+
+  public void Update(float delta)
   {
-    base._Process(delta);
-    
     foreach (var t in movers)
     {
       t.Update();
@@ -56,7 +57,9 @@ public class MoveManager : Node, IBulletManager
 
   public Vector2 PlayerPosition(IBullet targettedBullet)
   {
-    throw new NotImplementedException();
+    //just give the player's position
+    Debug.Assert(null != GetPlayerPosition);
+    return GetPlayerPosition();
   }
 
   public void RemoveBullet(IBullet deadBullet)

@@ -25,10 +25,10 @@ namespace BulletMLLib
 		public virtual ENodeType NodeType { get; protected set; } = ENodeType.none;
 
     /// <summary>
-		/// The label of this node
-		/// This can be used by other nodes to reference this node
-		/// </summary>
-		public string Label { get; private set; }
+    /// The label of this node
+    /// This can be used by other nodes to reference this node
+    /// </summary>
+    public string Label { get; private set; } = Guid.NewGuid().ToString();
 
     /// <summary>
     /// An equation used to get a value of this node.

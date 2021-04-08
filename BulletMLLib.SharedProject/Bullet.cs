@@ -87,7 +87,7 @@ namespace BulletMLLib
 		/// Abstract property to get the X location of this bullet.
 		/// measured in pixels from upper left
 		/// </summary>
-		/// <value>The horizontrla position.</value>
+		/// <value>The horizontal position.</value>
 		public abstract float X
 		{
 			get;
@@ -109,13 +109,7 @@ namespace BulletMLLib
 		/// Gets my bullet manager.
 		/// </summary>
 		/// <value>My bullet manager.</value>
-		public IBulletManager MyBulletManager
-		{
-			get
-			{
-				return _bulletManager;
-			}
-		}
+		public IBulletManager MyBulletManager => _bulletManager;
 
 		/// <summary>
 		/// Gets or sets the direction.
@@ -128,16 +122,10 @@ namespace BulletMLLib
 		}
 
 		/// <summary>
-		/// Convenience property to get teh label of a bullet.
+		/// Convenience property to get the label of a bullet.
 		/// </summary>
 		/// <value>The label.</value>
-		public string Label
-		{
-			get
-			{
-				return MyNode.Label;
-			}
-		}
+		public string Label => MyNode.Label;
 
 		/// <summary>
 		/// This is the initial velocity of the bullet when it is fired.
@@ -146,14 +134,8 @@ namespace BulletMLLib
 		/// </summary>
 		public Vector2 InitialVelocity
 		{
-			get
-			{
-				return _initialVelocity;
-			}
-			set
-			{
-				_initialVelocity = value;
-			}
+			get => _initialVelocity;
+			set => _initialVelocity = value;
 		}
 
 		#endregion //Properties

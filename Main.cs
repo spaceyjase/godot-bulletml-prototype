@@ -21,6 +21,7 @@ public class Main : Node2D
 	
 	private int currentPattern = 0;
 	private Mover topLevelBullet;
+	private readonly Dictionary<int, Node2D> bullets = new Dictionary<int, Node2D>();
 
 	public Main()
 	{
@@ -53,30 +54,36 @@ public class Main : Node2D
   {
 	  base._Process(delta);
 	  
-		// HACK: clear out all the bullets
-		foreach (var child in GetChildren())
-		{
-			// HACK: object pooling and bullet mapping to godot nodes 'cos this is painful...
-			(child as Node).QueueFree();
-		}
-
 	  moveManager.Update(delta);
 	  
 		// TODO: physics
+		
 		// HACK: draw bullets for each mover
-	  for (var i = 0; i < moveManager.TopLevelMovers.Count(); ++i)
+		DrawBullet(moveManager.TopLevelMovers);
+		DrawBullet(moveManager.Movers);
+  }
+
+  private void DrawBullet(IReadOnlyList<Mover> movers)
+  {
+	  for (var i = 0; i < movers.Count; ++i)
 	  {
-			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-			var bullet = scene.Instance() as Node2D;
-			bullet.Position = moveManager.TopLevelMovers[i].Position;
-			AddChild(bullet);
-	  }
-	  for (var i = 0; i < moveManager.Movers.Count(); ++i)
-	  {
-			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-			var bullet = scene.Instance() as Node2D;
-			bullet.Position = moveManager.Movers[i].Position;
-			AddChild(bullet);
+		  var mover = movers[i];
+		  
+		  if (!mover.Used) continue;
+
+		  Node2D bullet;
+		  if (bullets.ContainsKey(i))
+		  {
+			  bullet = bullets[i];
+		  }
+		  else
+		  {
+			  var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
+			  bullet = scene.Instance() as Node2D;
+			  AddChild(bullet);
+			  bullets[i] = bullet;
+		  }
+			bullet.Position = mover.Position;
 	  }
   }
 
@@ -88,6 +95,8 @@ public class Main : Node2D
 			// TODO: object pooling
 			(child as Node).QueueFree();
 		}
+
+		bullets.Clear();
 		moveManager.Clear();
 
 		//add a new bullet in the center of the screen

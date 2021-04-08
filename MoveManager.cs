@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using BulletMLLib;
 
-public class MoveManager : Node, IBulletManager
+public class MoveManager : IBulletManager
 {
   [Export] private float timeSpeed = 1.0f;
   [Export] private float scale = 1.0f;
-      
+
   private readonly List<Mover> movers = new List<Mover>();
   private readonly List<Mover> topLevelMovers = new List<Mover>();
 
@@ -24,14 +24,14 @@ public class MoveManager : Node, IBulletManager
 
   public void Update(float delta)
   {
-    foreach (var t in movers)
+    for (var i = 0; i < movers.Count; i++)
     {
-      t.Update();
+      movers[i].Update();
     }
 
-    foreach (var t in topLevelMovers)
+    for (var i = 0; i < topLevelMovers.Count; i++)
     {
-      t.Update();
+      topLevelMovers[i].Update();
     }
 
     FreeMovers();
@@ -99,5 +99,19 @@ public class MoveManager : Node, IBulletManager
   {
     movers.Clear();
     topLevelMovers.Clear();
+  }
+
+  public void PostUpdate()
+  {
+    // TODO: use godot game loop
+    foreach (var t in movers)
+    {
+      t.PostUpdate();
+    }
+
+    foreach (var t in topLevelMovers)
+    {
+      t.PostUpdate();
+    }
   }
 }

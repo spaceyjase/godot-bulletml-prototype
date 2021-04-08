@@ -10,6 +10,10 @@ public class Mover : Bullet
   public override void PostUpdate()
   {
     // something something out of bounds
+    if (X < 0f || X > Main.ViewportWidth || Y < 0f || Y > Main.ViewportHeight)
+    {
+      Used = false;
+    }
   }
   
   public override float X

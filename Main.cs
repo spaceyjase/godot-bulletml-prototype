@@ -7,6 +7,12 @@ using BulletMLLib;
 public class Main : Node2D
 {
 	[Export] private string bulletXml;
+
+	private static Main instance;
+	
+	// TODO: GameManager/Globals
+	public static float ViewportWidth => instance.GetViewportRect().Size.x;
+	public static float ViewportHeight => instance.GetViewportRect().Size.y;
 	
 	private List<string> patternNames = new List<string>();
 	private readonly List<BulletPattern> myPatterns = new List<BulletPattern>();
@@ -20,6 +26,7 @@ public class Main : Node2D
 
 	public Main()
 	{
+		instance = this;
 		moveManager = new MoveManager(() => new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f));
 	}
 
@@ -52,8 +59,10 @@ public class Main : Node2D
 
 	  for (var i = 0; i < moveManager.Movers.Count(); ++i)
 	  {
+		  if (i >= bullets.Count) break;
+		  
+		  // TODO: physics
 		  bullets[i].Position = mover.Position;
-		  //spriteBatch.Draw(texture, mover.pos, Color.Black);
 	  }
   }
 
@@ -73,6 +82,8 @@ public class Main : Node2D
 			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
 			var bullet = scene.Instance() as Node2D;
 			bullets.Add(bullet);
+
+			GD.Print(bullet.Name);
 			
 			this.AddChild(bullet);
 		}

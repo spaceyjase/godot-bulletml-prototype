@@ -19,11 +19,8 @@ public class Main : Node2D
 
 	private readonly MoveManager moveManager;
 	
-	private Mover mover;
-	
 	private int currentPattern = 0;
-	private List<Node2D> bullets;
-	private List<Node2D> topLevelBullets;
+	private Mover topLevelBullet;
 
 	public Main()
 	{
@@ -35,7 +32,7 @@ public class Main : Node2D
   {
     base._Ready();
 
-    GameManager.GameDifficulty = () => 0.0f;
+    GameManager.GameDifficulty = () => 1.0f;
     
     //foreach (var source in System.IO.Directory.GetFiles("res://samples/", "*.xml"))
     foreach (var source in new List<string> { bulletXml })
@@ -55,15 +52,30 @@ public class Main : Node2D
   public override void _Process(float delta)
   {
 	  base._Process(delta);
+	  
+		//clear out all the bullets
+		foreach (var child in GetChildren())
+		{
+			// TODO: object pooling and bullet mapping to godot nodes 'cos this is painful...
+			(child as Node).QueueFree();
+		}
 
 	  moveManager.Update(delta);
-
+	  
+		// TODO: physics
+	  for (var i = 0; i < moveManager.TopLevelMovers.Count(); ++i)
+	  {
+			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
+			var bullet = scene.Instance() as Node2D;
+			bullet.Position = moveManager.TopLevelMovers[i].Position;
+			AddChild(bullet);
+	  }
 	  for (var i = 0; i < moveManager.Movers.Count(); ++i)
 	  {
-		  if (i >= bullets.Count) break;
-		  
-		  // TODO: physics
-		  bullets[i].Position = mover.Position;
+			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
+			var bullet = scene.Instance() as Node2D;
+			bullet.Position = moveManager.Movers[i].Position;
+			AddChild(bullet);
 	  }
   }
 
@@ -76,34 +88,10 @@ public class Main : Node2D
 			(child as Node).QueueFree();
 		}
 		moveManager.Clear();
-		topLevelBullets?.Clear();
-		bullets?.Clear();
 
 		//add a new bullet in the center of the screen
-		mover = (Mover)moveManager.CreateTopBullet();
-		mover.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y / 2f);
-		mover.InitTopNode(myPatterns[currentPattern].RootNode);
-
-		topLevelBullets = new List<Node2D>();
-		foreach (var mover in moveManager.TopLevelMovers)
-		{
-			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-			var bullet = scene.Instance() as Node2D;
-			topLevelBullets.Add(bullet);
-			bullet.Position = mover.Position;
-
-			AddChild(bullet);
-		}
-
-		bullets = new List<Node2D>();
-		foreach (var mover in moveManager.Movers)
-		{
-			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-			var bullet = scene.Instance() as Node2D;
-			bullets.Add(bullet);
-			bullet.Position = mover.Position;
-
-			AddChild(bullet);
-		}
+		topLevelBullet = (Mover)moveManager.CreateTopBullet();
+		topLevelBullet.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y / 2f);
+		topLevelBullet.InitTopNode(myPatterns[currentPattern].RootNode);
 	}
 }

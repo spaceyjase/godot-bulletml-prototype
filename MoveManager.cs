@@ -20,6 +20,8 @@ public class MoveManager : IBulletManager
     GetPlayerPosition = playerPosition;
   }
 
+  public IEnumerable<Mover> TopLevelMovers => topLevelMovers;
+
   public IEnumerable<Mover> Movers => movers;
 
   public void Update(float delta)

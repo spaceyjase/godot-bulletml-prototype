@@ -2,7 +2,6 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using BulletMLLib;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 public class MoveManager : Node, IBulletManager
 {

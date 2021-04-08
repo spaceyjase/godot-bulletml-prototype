@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Godot;
 
 namespace BulletMLLib
 {
@@ -75,21 +76,21 @@ namespace BulletMLLib
 					case ENodeType.sequence:
 					{
 						//Sequence in an acceleration node means "add this amount every frame"
-						_acceleration.X = horiz.GetValue(this, bullet);
+						_acceleration.x = horiz.GetValue(this, bullet);
 					}
 					break;
 
 					case ENodeType.relative:
 					{
 						//accelerate by a certain amount
-						_acceleration.X = horiz.GetValue(this, bullet) / Duration;
+						_acceleration.x = horiz.GetValue(this, bullet) / Duration;
 					}
 					break;
 
 					default:
 					{
 						//accelerate to a specific value
-						_acceleration.X = (horiz.GetValue(this, bullet) - bullet.Acceleration.X) / Duration;
+						_acceleration.x = (horiz.GetValue(this, bullet) - bullet.Acceleration.x) / Duration;
 					}
 					break;
 				}
@@ -105,21 +106,21 @@ namespace BulletMLLib
 					case ENodeType.sequence:
 					{
 						//Sequence in an acceleration node means "add this amount every frame"
-						_acceleration.Y = vert.GetValue(this, bullet);
+						_acceleration.y = vert.GetValue(this, bullet);
 					}
 					break;
 
 					case ENodeType.relative:
 					{
 						//accelerate by a certain amount
-						_acceleration.Y = vert.GetValue(this, bullet) / Duration;
+						_acceleration.y = vert.GetValue(this, bullet) / Duration;
 					}
 					break;
 
 					default:
 					{
 						//accelerate to a specific value
-						_acceleration.Y = (vert.GetValue(this, bullet) - bullet.Acceleration.Y) / Duration;
+						_acceleration.y = (vert.GetValue(this, bullet) - bullet.Acceleration.y) / Duration;
 					}
 					break;
 				}

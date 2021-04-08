@@ -1,7 +1,5 @@
 using Godot;
-using System;
 using BulletMLLib;
-using SharpDX.Direct3D11;
 
 public class Mover : Bullet
 {

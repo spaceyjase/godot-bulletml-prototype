@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Godot;
 
 namespace BulletMLLib
 {
@@ -122,14 +123,8 @@ namespace BulletMLLib
 		/// <value>The direction in radians.</value>
 		public virtual float Direction
 		{
-			get
-			{
-				return _direction;
-			}
-			set
-			{
-				_direction = MathHelper.WrapAngle(value);
-			}
+			get => _direction;
+			set => _direction = MathHelper.WrapAngle(value);
 		}
 
 		/// <summary>
@@ -253,7 +248,7 @@ namespace BulletMLLib
 			MyNode = subNode;
 
 			//found a top num node, add a task for it
-			BulletMLTask task = new BulletMLTask(subNode, null);
+			var task = new BulletMLTask(subNode, null);
 
 			//parse the nodes into the task list
 			task.ParseTasks(this);
@@ -264,13 +259,12 @@ namespace BulletMLLib
 			Tasks.Add(task);
 
 			//Check if we should change the start heading and speed to adjust for an initial velocity
-			if (Vector2.Zero != InitialVelocity)
-			{
-				//now that the heading and speed have been set, adjust them according to the initial velocity.
-				Vector2 final = (Direction.ToVector2() * Speed * Scale) + InitialVelocity;
-				Direction = final.Angle();
-				Speed = final.Length() / Scale;
-			}
+			if (Vector2.Zero == InitialVelocity) return;
+			
+			//now that the heading and speed have been set, adjust them according to the initial velocity.
+			var final = (Direction.ToVector2() * Speed * Scale) + InitialVelocity;
+			Direction = final.Angle();
+			Speed = final.Length() / Scale;
 		}
 
 		/// <summary>
@@ -296,8 +290,8 @@ namespace BulletMLLib
 
 			//only do this stuff if the bullet isn't done, cuz sin/cosin are expensive
 			var vel = (Acceleration + (Direction.ToVector2() * (Speed * TimeSpeed))) * Scale;
-			X += vel.X;
-			Y += vel.Y;
+			X += vel.x;
+			Y += vel.y;
 		}
 
 		/// <summary>

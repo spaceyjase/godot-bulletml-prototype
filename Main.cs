@@ -53,16 +53,17 @@ public class Main : Node2D
   {
 	  base._Process(delta);
 	  
-		//clear out all the bullets
+		// HACK: clear out all the bullets
 		foreach (var child in GetChildren())
 		{
-			// TODO: object pooling and bullet mapping to godot nodes 'cos this is painful...
+			// HACK: object pooling and bullet mapping to godot nodes 'cos this is painful...
 			(child as Node).QueueFree();
 		}
 
 	  moveManager.Update(delta);
 	  
 		// TODO: physics
+		// HACK: draw bullets for each mover
 	  for (var i = 0; i < moveManager.TopLevelMovers.Count(); ++i)
 	  {
 			var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");

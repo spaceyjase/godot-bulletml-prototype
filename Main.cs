@@ -6,8 +6,6 @@ using BulletMLLib;
 
 public class Main : Node2D
 {
-	[Export] private string bulletXml;
-
 	private static Main instance;
 	
 	// TODO: GameManager/Globals
@@ -35,8 +33,7 @@ public class Main : Node2D
 
     GameManager.GameDifficulty = () => 1.0f;
     
-    //foreach (var source in System.IO.Directory.GetFiles("res://samples/", "*.xml"))
-    foreach (var source in new List<string> { bulletXml })
+    foreach (var source in System.IO.Directory.GetFiles("./samples", "*.xml"))
 		{
 			//store the name
 			patternNames.Add(source);
@@ -53,7 +50,20 @@ public class Main : Node2D
   public override void _Process(float delta)
   {
 	  base._Process(delta);
-	  
+
+	  if (Input.IsActionJustPressed("ui_select"))
+	  {
+		  currentPattern++;
+		  if (currentPattern >= myPatterns.Count)
+		  {
+			  currentPattern = 0;
+		  }
+
+		  AddBullet();
+		  
+		  return;
+	  }
+
 	  moveManager.Update(delta);
 	  
 		// TODO: physics

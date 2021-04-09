@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using BulletMLLib.SharedProject.Tasks;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
   /// <summary>
   /// This is a single node from a BulletML document.
@@ -51,7 +52,7 @@ namespace BulletMLLib
     #region Methods
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BulletMLLib.BulletMLNode"/> class.
+    /// Initializes a new instance of the <see cref="BulletMLNode"/> class.
     /// </summary>
     public BulletMLNode(ENodeName nodeType)
     {
@@ -108,7 +109,7 @@ namespace BulletMLLib
       //this uses breadth first search, since labelled nodes are usually top level
 
       //Check if any of our child nodes match the request
-      for (int i = 0; i < ChildNodes.Count; i++)
+      for (var i = 0; i < ChildNodes.Count; i++)
       {
         if ((eName == ChildNodes[i].Name) && (strLabel == ChildNodes[i].Label))
         {
@@ -117,9 +118,9 @@ namespace BulletMLLib
       }
 
       //recurse into the child nodes and see if we find any matches
-      for (int i = 0; i < ChildNodes.Count; i++)
+      for (var i = 0; i < ChildNodes.Count; i++)
       {
-        BulletMLNode foundNode = ChildNodes[i].FindLabelNode(strLabel, eName);
+        var foundNode = ChildNodes[i].FindLabelNode(strLabel, eName);
         if (null != foundNode)
         {
           return foundNode;
@@ -221,7 +222,7 @@ namespace BulletMLLib
 
       //Parse all our attributes
       XmlNamedNodeMap mapAttributes = bulletNodeElement.Attributes;
-      for (int i = 0; i < mapAttributes.Count; i++)
+      for (var i = 0; i < mapAttributes.Count; i++)
       {
         var strName = mapAttributes.Item(i).Name;
         var strValue = mapAttributes.Item(i).Value;

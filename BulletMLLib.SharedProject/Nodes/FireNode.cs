@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	public class FireNode : BulletMLNode
 	{
@@ -17,14 +17,14 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.FireNode"/> class.
+		/// Initializes a new instance of the <see cref="FireNode"/> class.
 		/// </summary>
 		public FireNode() : this(ENodeName.fire)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.FireNode"/> class.
+		/// Initializes a new instance of the <see cref="FireNode"/> class.
 		/// this is the constructor used by sub classes
 		/// </summary>
 		/// <param name="eNodeType">the node type.</param>
@@ -48,9 +48,11 @@ namespace BulletMLLib
 			if (null == BulletDescriptionNode)
 			{
 				//make sure that dude knows what he's doing
-				BulletRefNode refNode = GetChild(ENodeName.bulletRef) as BulletRefNode;
-				refNode.FindMyBulletNode();
-				BulletDescriptionNode = refNode.ReferencedBulletNode;
+				if (GetChild(ENodeName.bulletRef) is BulletRefNode refNode)
+				{
+					refNode.FindMyBulletNode();
+					BulletDescriptionNode = refNode.ReferencedBulletNode;
+				}
 			}
 
 			Debug.Assert(null != BulletDescriptionNode);

@@ -1,7 +1,7 @@
 
 using Godot;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// This is the interface that outisde assemblies will use to manage bullets... mostly for creating/destroying them

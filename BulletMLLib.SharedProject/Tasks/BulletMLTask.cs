@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
 	/// <summary>
 	/// This is a task..each task is the action from a single xml node, for one bullet.
@@ -43,28 +44,22 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.BulletMLTask"/> class.
+		/// Initializes a new instance of the <see cref="BulletMLTask"/> class.
 		/// </summary>
 		/// <param name="node">Node.</param>
 		/// <param name="owner">Owner.</param>
 		public BulletMLTask(BulletMLNode node, BulletMLTask owner)
 		{
-			if (null == node)
-			{
-				throw new NullReferenceException("node argument cannot be null");
-			}
-
 			ChildTasks = new List<BulletMLTask>();
 			ParamList = new List<float>();
 			TaskFinished = false;
 			this.Owner = owner;
-			this.Node = node; 
+			this.Node = node ?? throw new NullReferenceException("node argument cannot be null"); 
 		}
 
 		/// <summary>
 		/// Parse a specified node and bullet into this task
 		/// </summary>
-		/// <param name="myNode">the node for this dude</param>
 		/// <param name="bullet">the bullet this dude is controlling</param>
 		public virtual void ParseTasks(Bullet bullet)
 		{
@@ -73,7 +68,7 @@ namespace BulletMLLib
 				throw new NullReferenceException("bullet argument cannot be null");
 			}
 
-			foreach (BulletMLNode childNode in Node.ChildNodes)
+			foreach (var childNode in Node.ChildNodes)
 			{
 				ParseChildNode(childNode, bullet);
 			}
@@ -82,9 +77,9 @@ namespace BulletMLLib
 		/// <summary>
 		/// Parse a specified node and bullet into this task
 		/// </summary>
-		/// <param name="myNode">the node for this dude</param>
+		/// <param name="childNode">the node for this dude</param>
 		/// <param name="bullet">the bullet this dude is controlling</param>
-		public virtual void ParseChildNode(BulletMLNode childNode, Bullet bullet)
+		protected virtual void ParseChildNode(BulletMLNode childNode, Bullet bullet)
 		{
 			Debug.Assert(null != childNode);
 			Debug.Assert(null != bullet);
@@ -95,10 +90,10 @@ namespace BulletMLLib
 				case ENodeName.repeat:
 				{
 					//convert the node to an repeatnode
-					RepeatNode myRepeatNode = childNode as RepeatNode;
+					var myRepeatNode = childNode as RepeatNode;
 
 					//create a placeholder bulletmltask for the repeat node
-					RepeatTask repeatTask = new RepeatTask(myRepeatNode, this);
+					var repeatTask = new RepeatTask(myRepeatNode, this);
 
 					//parse the child nodes into the repeat task
 					repeatTask.ParseTasks(bullet);
@@ -111,10 +106,10 @@ namespace BulletMLLib
 				case ENodeName.action:
 				{
 					//convert the node to an ActionNode
-					ActionNode myActionNode = childNode as ActionNode;
+					var myActionNode = childNode as ActionNode;
 
 					//create the action task
-					ActionTask actionTask = new ActionTask(myActionNode, this);
+					var actionTask = new ActionTask(myActionNode, this);
 
 					//parse the children of the action node into the task
 					actionTask.ParseTasks(bullet);
@@ -127,13 +122,13 @@ namespace BulletMLLib
 				case ENodeName.actionRef:
 				{
 					//convert the node to an ActionNode
-					ActionRefNode myActionNode = childNode as ActionRefNode;
+					var myActionNode = childNode as ActionRefNode;
 
 					//create the action task
-					ActionTask actionTask = new ActionTask(myActionNode, this);
+					var actionTask = new ActionTask(myActionNode, this);
 
 					//add the params to the action task
-					for (int i = 0; i < childNode.ChildNodes.Count; i++)
+					for (var i = 0; i < childNode.ChildNodes.Count; i++)
 					{
 						actionTask.ParamList.Add(childNode.ChildNodes[i].GetValue(this, bullet));
 					}
@@ -161,10 +156,10 @@ namespace BulletMLLib
 				case ENodeName.fire:
 				{
 					//convert the node to a fire node
-					FireNode myFireNode = childNode as FireNode;
+					var myFireNode = childNode as FireNode;
 
 					//create the fire task
-					FireTask fireTask = new FireTask(myFireNode, this);
+					var fireTask = new FireTask(myFireNode, this);
 
 					//parse the children of the fire node into the task
 					fireTask.ParseTasks(bullet);
@@ -177,22 +172,24 @@ namespace BulletMLLib
 				case ENodeName.fireRef:
 				{
 					//convert the node to a fireref node
-					FireRefNode myFireNode = childNode as FireRefNode;
 
 					//create the fire task
-					FireTask fireTask = new FireTask(myFireNode.ReferencedFireNode, this);
-
-					//add the params to the fire task
-					for (int i = 0; i < childNode.ChildNodes.Count; i++)
+					if (childNode is FireRefNode myFireNode)
 					{
-						fireTask.ParamList.Add(childNode.ChildNodes[i].GetValue(this, bullet));
+						var fireTask = new FireTask(myFireNode.ReferencedFireNode, this);
+
+						//add the params to the fire task
+						for (var i = 0; i < childNode.ChildNodes.Count; i++)
+						{
+							fireTask.ParamList.Add(childNode.ChildNodes[i].GetValue(this, bullet));
+						}
+
+						//parse the children of the action node into the task
+						fireTask.ParseTasks(bullet);
+
+						//store the task
+						ChildTasks.Add(fireTask);
 					}
-
-					//parse the children of the action node into the task
-					fireTask.ParseTasks(bullet);
-
-					//store the task
-					ChildTasks.Add(fireTask);
 				}
 				break;
 
@@ -220,11 +217,11 @@ namespace BulletMLLib
 		/// This gets called when nested repeat nodes get initialized.
 		/// </summary>
 		/// <param name="bullet">Bullet.</param>
-		public virtual void HardReset(Bullet bullet)
+		protected virtual void HardReset(Bullet bullet)
 		{
 			TaskFinished = false;
 
-			foreach (BulletMLTask task in ChildTasks)
+			foreach (var task in ChildTasks)
 			{
 				task.HardReset(bullet);
 			}
@@ -241,7 +238,7 @@ namespace BulletMLLib
 		{
 			TaskFinished = false;
 
-			foreach (BulletMLTask task in ChildTasks)
+			foreach (var task in ChildTasks)
 			{
 				task.InitTask(bullet);
 			}
@@ -268,20 +265,21 @@ namespace BulletMLLib
 		{
 			//run all the child tasks
 			TaskFinished = true;
-			for (int i = 0; i < ChildTasks.Count; i++)
+			for (var i = 0; i < ChildTasks.Count; i++)
 			{
 				//is the child task finished running?
 				if (!ChildTasks[i].TaskFinished)
 				{
 					//Run the child task...
-					ERunStatus childStaus = ChildTasks[i].Run(bullet);
-					if (childStaus == ERunStatus.Stop)
+					var childStatus = ChildTasks[i].Run(bullet);
+					if (childStatus == ERunStatus.Stop)
 					{
 						//The child task is paused, so it is not finished
 						TaskFinished = false;
-						return childStaus;
+						return childStatus;
 					}
-					else if (childStaus == ERunStatus.Continue)
+
+					if (childStatus == ERunStatus.Continue)
 					{
 						//child task needs to do some more work
 						TaskFinished = false;
@@ -289,7 +287,7 @@ namespace BulletMLLib
 				}
 			}
 
-			return (TaskFinished ?  ERunStatus.End : ERunStatus.Continue);
+			return TaskFinished ?  ERunStatus.End : ERunStatus.Continue;
 		}
 
 		/// <summary>
@@ -302,16 +300,8 @@ namespace BulletMLLib
 			//if that task doesn't have any params, go up until we find one that does
 			if (ParamList.Count < iParamNumber)
 			{
-				//the current task doens't have enough params to solve this value
-				if (null != Owner)
-				{
-					return Owner.GetParamValue(iParamNumber);
-				}
-				else
-				{
-					//got to the top of the list...this means not enough params were passed into the ref
-					return 0.0f;
-				}
+				//the current task doesn't have enough params to solve this value
+				return Owner?.GetParamValue(iParamNumber) ?? 0.0f;
 			}
 			
 			//the value of that param is the one we want
@@ -336,16 +326,16 @@ namespace BulletMLLib
 		/// <param name="strLabel">String label.</param>
 		public BulletMLTask FindTaskByLabel(string strLabel)
 		{
-			//check if this is the corretc task
+			//check if this is the correct task
 			if (strLabel == Node.Label)
 			{
 				return this;
 			}
 
 			//check if any of teh child tasks have a task with that label
-			foreach (BulletMLTask childTask in ChildTasks)
+			foreach (var childTask in ChildTasks)
 			{
-				BulletMLTask foundTask = childTask.FindTaskByLabel(strLabel);
+				var foundTask = childTask.FindTaskByLabel(strLabel);
 				if (null != foundTask)
 				{
 					return foundTask;
@@ -363,16 +353,16 @@ namespace BulletMLLib
 		/// <param name="eName">the name of the node the task should be attached to</param>
 		public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
 		{
-			//check if this is the corretc task
+			//check if this is the correct task
 			if ((strLabel == Node.Label) && (eName == Node.Name))
 			{
 				return this;
 			}
 
 			//check if any of teh child tasks have a task with that label
-			foreach (BulletMLTask childTask in ChildTasks)
+			foreach (var childTask in ChildTasks)
 			{
-				BulletMLTask foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
+				var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
 				if (null != foundTask)
 				{
 					return foundTask;

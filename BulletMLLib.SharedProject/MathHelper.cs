@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
   public static class MathHelper
   {
@@ -58,8 +58,8 @@ namespace BulletMLLib
       float value4,
       float amount)
     {
-      double num1 = amount * (double) amount;
-      double num2 = num1 * amount;
+      var num1 = amount * (double) amount;
+      var num2 = num1 * amount;
       return (float) (0.5 * (2.0 * value2 + (value3 - (double) value1) * amount + (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * num1 + (3.0 * value2 - value1 - 3.0 * value3 + value4) * num2));
     }
 
@@ -114,8 +114,8 @@ namespace BulletMLLib
       double num3 = tangent1;
       double num4 = tangent2;
       double num5 = amount;
-      double num6 = num5 * num5 * num5;
-      double num7 = num5 * num5;
+      var num6 = num5 * num5 * num5;
+      var num7 = num5 * num5;
       return amount != 0.0 ? (amount != 1.0 ? (float) ((2.0 * num1 - 2.0 * num2 + num4 + num3) * num6 + (3.0 * num2 - 3.0 * num1 - 2.0 * num3 - num4) * num7 + num3 * num5 + num1) : value2) : value1;
     }
 
@@ -186,7 +186,7 @@ namespace BulletMLLib
     /// <returns>Interpolated value.</returns>
     public static float SmoothStep(float value1, float value2, float amount)
     {
-      float amount1 = MathHelper.Clamp(amount, 0.0f, 1f);
+      var amount1 = MathHelper.Clamp(amount, 0.0f, 1f);
       return MathHelper.Hermite(value1, 0.0f, value2, 0.0f, amount1);
     }
 

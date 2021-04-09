@@ -1,6 +1,7 @@
 using System;
+using BulletMLLib.SharedProject.Tasks;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	/// <summary>
 	/// Action node... also the base class for actionref nodes
@@ -21,14 +22,14 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.ActionNode"/> class.
+		/// Initializes a new instance of the <see cref="ActionNode"/> class.
 		/// </summary>
 		public ActionNode() : this(ENodeName.action)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.ActionNode"/> class.
+		/// Initializes a new instance of the <see cref="ActionNode"/> class.
 		/// this is the constructor used by sub classes
 		/// </summary>
 		/// <param name="eNodeType">the node type.</param>

@@ -1,16 +1,16 @@
 ﻿using System;
 using Godot;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
   public static class Vector2Ext
   {
     public static Vector2 ToVector2(this string strVector)
     {
-      Vector2 zero = Vector2.Zero;
+      var zero = Vector2.Zero;
       if (!string.IsNullOrEmpty(strVector))
       {
-        string[] strArray = strVector.Split(' ');
+        var strArray = strVector.Split(' ');
         if (strArray.Length >= 1)
           zero.x = Convert.ToSingle(strArray[0]);
         if (strArray.Length >= 2)
@@ -47,7 +47,7 @@ namespace BulletMLLib
 
     public static Vector2 Normalized(this Vector2 myVector)
     {
-      float num = myVector.Length();
+      var num = myVector.Length();
       return new Vector2(myVector.x / num, myVector.y / num);
     }
   }

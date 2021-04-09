@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using BulletMLLib.SharedProject.Nodes;
+using BulletMLLib.SharedProject.Tasks;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// If you want a thing to be bullet-like, you can inherit from this interface.

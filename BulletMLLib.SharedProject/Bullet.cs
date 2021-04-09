@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using BulletMLLib.SharedProject.Nodes;
+using BulletMLLib.SharedProject.Tasks;
 using Godot;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// This is the bullet class that outside assemblies will interact with.
@@ -143,7 +145,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.Bullet"/> class.
+		/// Initializes a new instance of the <see cref="Bullet"/> class.
 		/// </summary>
 		/// <param name="myBulletManager">My bullet manager.</param>
 		protected Bullet(IBulletManager myBulletManager)
@@ -170,8 +172,8 @@ namespace BulletMLLib
 			Debug.Assert(null != rootNode);
 
 			//okay find the item labelled 'top'
-			bool bValidBullet = false;
-			BulletMLNode topNode = rootNode.FindLabelNode("top", ENodeName.action);
+			var bValidBullet = false;
+			var topNode = rootNode.FindLabelNode("top", ENodeName.action);
 			if (topNode != null)
 			{
 				//initialize with the top node we found!
@@ -181,7 +183,7 @@ namespace BulletMLLib
 			else
 			{
 				//ok there is no 'top' node, so that means we have a list of 'top#' nodes
-				for (int i = 1; i < 10; i++)
+				for (var i = 1; i < 10; i++)
 				{
 					topNode = rootNode.FindLabelNode("top" + i, ENodeName.action);
 					if (topNode != null)
@@ -195,7 +197,7 @@ namespace BulletMLLib
 						else
 						{
 							//Create a new bullet
-							IBullet newDude = _bulletManager.CreateTopBullet();
+							var newDude = _bulletManager.CreateTopBullet();
 
 							//set the position to this dude's position
 							newDude.X = this.X;
@@ -289,10 +291,10 @@ namespace BulletMLLib
 		{
 			//get the player position so we can aim at that little fucker
 			Debug.Assert(null != MyBulletManager);
-			Vector2 shipPos = MyBulletManager.PlayerPosition(this);
+			var shipPos = MyBulletManager.PlayerPosition(this);
 
 			//get our position
-			Vector2 pos = new Vector2(X, Y);
+			var pos = new Vector2(X, Y);
 
 			//get the angle at that dude
 			return (shipPos - pos).Angle();
@@ -308,9 +310,9 @@ namespace BulletMLLib
 		public BulletMLTask FindTaskByLabel(string strLabel)
 		{
 			//check if any of teh child tasks have a task with that label
-			foreach (BulletMLTask childTask in Tasks)
+			foreach (var childTask in Tasks)
 			{
-				BulletMLTask foundTask = childTask.FindTaskByLabel(strLabel);
+				var foundTask = childTask.FindTaskByLabel(strLabel);
 				if (null != foundTask)
 				{
 					return foundTask;
@@ -329,9 +331,9 @@ namespace BulletMLLib
 		public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
 		{
 			//check if any of teh child tasks have a task with that label
-			foreach (BulletMLTask childTask in Tasks)
+			foreach (var childTask in Tasks)
 			{
-				BulletMLTask foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
+				var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
 				if (null != foundTask)
 				{
 					return foundTask;
@@ -347,7 +349,7 @@ namespace BulletMLLib
 		/// <returns></returns>
 		public bool TasksFinished()
 		{
-			for (int i = 0; i < Tasks.Count; i++)
+			for (var i = 0; i < Tasks.Count; i++)
 			{
 				if (!Tasks[i].TaskFinished)
 				{

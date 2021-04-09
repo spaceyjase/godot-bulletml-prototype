@@ -1,5 +1,5 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// This thing manages a few gameplay variables that used by the bulletml lib

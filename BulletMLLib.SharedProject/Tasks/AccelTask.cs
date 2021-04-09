@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using BulletMLLib.SharedProject.Nodes;
 using Godot;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
 	/// <summary>
 	/// This task adds acceleration to a bullet.
@@ -41,7 +42,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.BulletMLTask"/> class.
+		/// Initializes a new instance of the <see cref="BulletMLTask"/> class.
 		/// </summary>
 		/// <param name="node">Node.</param>
 		/// <param name="owner">Owner.</param>
@@ -67,7 +68,7 @@ namespace BulletMLLib
 			}
 
 			//Get the horizontal node
-			HorizontalNode horiz = Node.GetChild(ENodeName.horizontal) as HorizontalNode;
+			var horiz = Node.GetChild(ENodeName.horizontal) as HorizontalNode;
 			if (null != horiz)
 			{
 				//Set the x component of the acceleration
@@ -97,7 +98,7 @@ namespace BulletMLLib
 			}
 
 			//Get the vertical node
-			VerticalNode vert = Node.GetChild(ENodeName.vertical) as VerticalNode;
+			var vert = Node.GetChild(ENodeName.vertical) as VerticalNode;
 			if (null != vert)
 			{
 				//set teh y component of the acceleration

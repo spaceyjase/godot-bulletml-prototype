@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
 	/// <summary>
 	/// An action task, this dude contains a list of tasks that are repeated
@@ -52,10 +53,10 @@ namespace BulletMLLib
 			if (ENodeName.actionRef == Node.Name)
 			{
 				//add a sub task under this one for the referenced action
-				ActionRefNode myActionRefNode = Node as ActionRefNode;
+				var myActionRefNode = Node as ActionRefNode;
 
 				//create the action task
-				ActionTask actionTask = new ActionTask(myActionRefNode.ReferencedActionNode, this);
+				var actionTask = new ActionTask(myActionRefNode.ReferencedActionNode, this);
 
 				//parse the children of the action node into the task
 				actionTask.ParseTasks(bullet);
@@ -88,7 +89,7 @@ namespace BulletMLLib
 			//run the action until we hit the limit
 			while (RepeatNum < RepeatNumMax)
 			{
-				ERunStatus runStatus = base.Run(bullet);
+				var runStatus = base.Run(bullet);
 
 				//What was the return value from running all teh child actions?
 				switch (runStatus)
@@ -99,7 +100,7 @@ namespace BulletMLLib
 						RepeatNum++;
 
 						//reset all the child tasks
-						foreach (BulletMLTask task in ChildTasks)
+						foreach (var task in ChildTasks)
 						{
 							task.InitTask(bullet);
 						}

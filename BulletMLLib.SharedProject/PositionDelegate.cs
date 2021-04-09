@@ -1,7 +1,7 @@
 ﻿
 using Godot;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// This is a callback method for getting a position

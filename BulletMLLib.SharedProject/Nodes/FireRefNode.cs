@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	public class FireRefNode : FireNode
 	{
@@ -18,7 +18,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.FireRefNode"/> class.
+		/// Initializes a new instance of the <see cref="FireRefNode"/> class.
 		/// </summary>
 		public FireRefNode() : base(ENodeName.fireRef)
 		{
@@ -33,7 +33,7 @@ namespace BulletMLLib
 		{
 			//Find the action node this dude 
 			Debug.Assert(null != GetRootNode());
-			BulletMLNode refNode = GetRootNode().FindLabelNode(Label, ENodeName.fire);
+			var refNode = GetRootNode().FindLabelNode(Label, ENodeName.fire);
 
 			//make sure we foud something
 			if (null == refNode)

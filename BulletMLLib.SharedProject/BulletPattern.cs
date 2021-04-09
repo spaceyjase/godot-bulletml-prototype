@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
   /// <summary>
   /// This is a complete document that describes a bullet pattern.
@@ -36,7 +36,7 @@ namespace BulletMLLib
     #region Methods
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BulletMLLib.BulletPattern"/> class.
+    /// Initializes a new instance of the <see cref="BulletPattern"/> class.
     /// </summary>
     public BulletPattern()
     {

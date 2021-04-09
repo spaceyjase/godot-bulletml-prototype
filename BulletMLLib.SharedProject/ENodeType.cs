@@ -1,5 +1,5 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	public enum ENodeType
 	{

@@ -1,8 +1,8 @@
 using System;
-using Equationator;
 using System.Diagnostics;
+using Equationator;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// This is an equation used in BulletML nodes.
@@ -13,7 +13,7 @@ namespace BulletMLLib
 		/// <summary>
 		/// A randomizer for getting random values
 		/// </summary>
-		static private Random g_Random = new Random(DateTime.Now.Millisecond);
+		private static readonly Random g_Random = new Random(DateTime.Now.Millisecond);
 
 		public BulletMLEquation()
 		{
@@ -26,13 +26,13 @@ namespace BulletMLLib
 		/// used as a callback function in bulletml euqations
 		/// </summary>
 		/// <returns>The value.</returns>
-		public double RandomValue()
+		private double RandomValue()
 		{
 			//this value is "$rand", return a random number
 			return g_Random.NextDouble();
 		}
 
-		public double GameDifficulty()
+		private double GameDifficulty()
 		{
 			//This number is "$rank" which is the game difficulty.
 			Debug.Assert(null != GameManager.GameDifficulty);

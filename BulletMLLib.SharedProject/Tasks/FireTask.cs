@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
   /// <summary>
   /// A task to shoot a bullet
@@ -77,7 +78,7 @@ namespace BulletMLLib
     #region Methods
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BulletMLLib.FireTask"/> class.
+    /// Initializes a new instance of the <see cref="FireTask"/> class.
     /// </summary>
     /// <param name="node">Node.</param>
     /// <param name="owner">Owner.</param>
@@ -100,7 +101,7 @@ namespace BulletMLLib
         throw new NullReferenceException("bullet argument cannot be null");
       }
 
-      foreach (BulletMLNode childNode in Node.ChildNodes)
+      foreach (var childNode in Node.ChildNodes)
       {
         ParseChildNode(childNode, bullet);
       }
@@ -119,7 +120,7 @@ namespace BulletMLLib
     /// </summary>
     /// <param name="childNode">the node for this dude</param>
     /// <param name="bullet">the bullet this dude is controlling</param>
-    public override void ParseChildNode(BulletMLNode childNode, Bullet bullet)
+    protected override void ParseChildNode(BulletMLNode childNode, Bullet bullet)
     {
       Debug.Assert(null != childNode);
       Debug.Assert(null != bullet);
@@ -164,7 +165,7 @@ namespace BulletMLLib
     /// This gets called when nested repeat nodes get initialized.
     /// </summary>
     /// <param name="bullet">Bullet.</param>
-    public override void HardReset(Bullet bullet)
+    protected override void HardReset(Bullet bullet)
     {
       //This is the whole point of the hard reset, so the sequence nodes get reset.
       NumTimesInitialized = 0;
@@ -187,7 +188,7 @@ namespace BulletMLLib
         if (null != InitialDirectionTask)
         {
           //Set the fire direction to the "initial" value
-          float newBulletDirection = InitialDirectionTask.GetNodeValue(bullet) * (float)Math.PI / 180.0f;
+          var newBulletDirection = InitialDirectionTask.GetNodeValue(bullet) * (float)Math.PI / 180.0f;
           switch (InitialDirectionTask.Node.NodeType)
           {
             case ENodeType.absolute:
@@ -234,7 +235,7 @@ namespace BulletMLLib
         if (null != InitialSpeedTask)
         {
           //set the shoot speed to the "initial" value.
-          float newBulletSpeed = InitialSpeedTask.GetNodeValue(bullet);
+          var newBulletSpeed = InitialSpeedTask.GetNodeValue(bullet);
           switch (InitialSpeedTask.Node.NodeType)
           {
             case ENodeType.relative:

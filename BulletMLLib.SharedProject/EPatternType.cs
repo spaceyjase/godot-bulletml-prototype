@@ -1,5 +1,5 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// Different types of bullet patterns

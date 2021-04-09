@@ -1,5 +1,5 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	/// <summary>
 	/// Theese are used for tasks during runtime...

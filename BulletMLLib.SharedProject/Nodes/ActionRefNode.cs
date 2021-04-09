@@ -1,6 +1,6 @@
 using System;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	/// <summary>
 	/// Action reference node.
@@ -17,7 +17,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.ActionRefNode"/> class.
+		/// Initializes a new instance of the <see cref="ActionRefNode"/> class.
 		/// </summary>
 		public ActionRefNode() : base(ENodeName.actionRef)
 		{
@@ -34,7 +34,7 @@ namespace BulletMLLib
 			base.ValidateNode();
 
 			//Find the action node this dude references
-			BulletMLNode refNode = GetRootNode().FindLabelNode(Label, ENodeName.action);
+			var refNode = GetRootNode().FindLabelNode(Label, ENodeName.action);
 
 			//make sure we foud something
 			if (null == refNode)

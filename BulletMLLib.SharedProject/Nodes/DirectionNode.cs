@@ -1,10 +1,10 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	public class DirectionNode : BulletMLNode
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.DirectionNode"/> class.
+		/// Initializes a new instance of the <see cref="DirectionNode"/> class.
 		/// </summary>
 		public DirectionNode() : base(ENodeName.direction)
 		{
@@ -19,10 +19,7 @@ namespace BulletMLLib
 		/// <value>The type of the node.</value>
 		public override ENodeType NodeType 
 		{ 
-			get
-			{
-				return base.NodeType;
-			}
+			get => base.NodeType;
 			protected set
 			{
 				switch (value)

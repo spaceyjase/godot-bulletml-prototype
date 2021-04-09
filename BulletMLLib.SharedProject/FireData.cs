@@ -1,5 +1,5 @@
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject
 {
 	//TODO: sort this shit out
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
 	/// <summary>
 	/// This task changes the direction a little bit every frame
@@ -35,7 +36,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.BulletMLTask"/> class.
+		/// Initializes a new instance of the <see cref="BulletMLTask"/> class.
 		/// </summary>
 		/// <param name="node">Node.</param>
 		/// <param name="owner">Owner.</param>
@@ -63,7 +64,7 @@ namespace BulletMLLib
 			}
 
 			//Get the amount to change direction from the nodes
-			DirectionNode dirNode = Node.GetChild(ENodeName.direction) as DirectionNode;
+			var dirNode = Node.GetChild(ENodeName.direction) as DirectionNode;
 			NodeDirection = dirNode.GetValue(this, bullet) * (float)Math.PI / 180.0f; //also make sure to convert to radians
 
 			//How do we want to change direction?
@@ -73,7 +74,7 @@ namespace BulletMLLib
 		private float GetDirection(Bullet bullet)
 		{
 			//How do we want to change direction?
-			float direction = 0.0f;
+			var direction = 0.0f;
 			switch (ChangeType)
 			{
 				case ENodeType.sequence:

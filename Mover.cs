@@ -1,48 +1,77 @@
+using BulletMLLib.SharedProject;
 using Godot;
-using BulletMLLib;
 
-public class Mover : Bullet
+namespace bulletmltemplate
 {
-  public Mover(IBulletManager myBulletManager) : base(myBulletManager)
+  /// <summary>
+  /// Mover - represents a bullet in game, moved by the MoveManager.
+  /// </summary>
+  public class Mover : Bullet
   {
-  }
+    private bool used;
+    private Node2D ParentNode { get; set; }
+    private Node2D BulletNode { get; set; }
 
-  public override void PostUpdate()
-  {
-    // something something out of bounds
-    if (X < 0f || X > Main.ViewportWidth || Y < 0f || Y > Main.ViewportHeight)
+    public Mover(IBulletManager myBulletManager) : base(myBulletManager)
     {
-      Used = false;
     }
-  }
-  
-  public override float X
-  {
-    get => Position.x;
-    set
-    { 
-      var position = Position;
-      position.x = value;
-      Position = position;
-    }
-  }
 
-  public override float Y
-  {
-    get => Position.y;
-    set
-    { 
-      var position = Position;
-      position.y = value;
-      Position = position;
+    public override void PostUpdate()
+    {
+      // something something out of bounds
+      if (X < 0f || X > Main.ViewportWidth || Y < 0f || Y > Main.ViewportHeight)
+      {
+        Used = false;
+      }
     }
-  }
   
-  public Vector2 Position { get; set; }
-  public bool Used { get; set; }
+    public override float X
+    {
+      get => Position.x;
+      set
+      { 
+        var position = Position;
+        position.x = value;
+        Position = position;
+      
+        BulletNode.Position = Position;
+      }
+    }
 
-  public void Init()
-  {
-    Used = true;
+    public override float Y
+    {
+      get => Position.y;
+      set
+      { 
+        var position = Position;
+        position.y = value;
+        Position = position;
+      
+        BulletNode.Position = Position;
+      }
+    }
+  
+    public Vector2 Position { get; set; }
+
+    public bool Used
+    {
+      get => used;
+      set
+      {
+        used = value;
+        BulletNode.Visible = value;
+      }
+    }
+
+
+    public void Init()
+    {
+      ParentNode = Main.Instance;
+      var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
+      BulletNode = scene.Instance() as Node2D;
+      ParentNode.AddChild(BulletNode);
+    
+      Used = true;
+    }
   }
 }

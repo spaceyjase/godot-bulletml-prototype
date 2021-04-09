@@ -1,117 +1,91 @@
-using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using BulletMLLib;
+using BulletMLLib.SharedProject;
+using Godot;
 
-public class Main : Node2D
+namespace bulletmltemplate
 {
-	private static Main instance;
-	
-	// TODO: GameManager/Globals
-	public static float ViewportWidth => instance.GetViewportRect().Size.x;
-	public static float ViewportHeight => instance.GetViewportRect().Size.y;
-	
-	private List<string> patternNames = new List<string>();
-	private readonly List<BulletPattern> myPatterns = new List<BulletPattern>();
-
-	private readonly MoveManager moveManager;
-	
-	private int currentPattern = 0;
-	private Mover topLevelBullet;
-	private readonly Dictionary<int, Node2D> bullets = new Dictionary<int, Node2D>();
-
-	public Main()
+	public class Main : Node2D
 	{
-		instance = this;
-		moveManager = new MoveManager(() => new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f));
-	}
+		// TODO: GameManager/Globals
+		public static float ViewportWidth => Instance.GetViewportRect().Size.x;
+		public static float ViewportHeight => Instance.GetViewportRect().Size.y;
+		public static Main Instance { get; private set; }
 
-	public override void _Ready()
-  {
-    base._Ready();
+		private readonly List<BulletPattern> myPatterns = new List<BulletPattern>();
 
-    GameManager.GameDifficulty = () => 1.0f;
-    
-    foreach (var source in System.IO.Directory.GetFiles("./samples", "*.xml"))
+		private readonly MoveManager moveManager;
+	
+		private int currentPattern;
+		private Mover topLevelBullet;
+
+		public Main()
 		{
-			//store the name
-			patternNames.Add(source);
-
-			//load the pattern
-			var pattern = new BulletPattern();
-			pattern.ParseXML(source);
-			myPatterns.Add(pattern);
+			Instance = this;
+			moveManager = new MoveManager(() => new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f));
 		}
 
-    AddBullet();
-  }
+		public override void _Ready()
+		{
+			base._Ready();
 
-  public override void _Process(float delta)
-  {
-	  base._Process(delta);
+			GameManager.GameDifficulty = () => 1.0f;
+			
+			foreach (var source in System.IO.Directory.GetFiles("./samples", "*.xml"))
+			{
+				// load the pattern
+				var pattern = new BulletPattern();
+				pattern.ParseXML(source);
+				myPatterns.Add(pattern);
+			}
 
-	  if (Input.IsActionJustPressed("ui_select"))
-	  {
-		  currentPattern++;
-		  if (currentPattern >= myPatterns.Count)
-		  {
-			  currentPattern = 0;
-		  }
+			AddBullet();
+		}
 
-		  AddBullet();
+		public override void _Process(float delta)
+		{
+			base._Process(delta);
+
+			if (Input.IsActionJustPressed("ui_select"))
+			{
+				currentPattern++;
+				if (currentPattern >= myPatterns.Count)
+				{
+					currentPattern = 0;
+				}
+
+				AddBullet();
 		  
-		  return;
-	  }
+				return;
+			}
 
-	  moveManager.Update(delta);
+			moveManager.Update(delta);
 	  
-		// TODO: physics
-		
-		// HACK: draw bullets for each mover
-		DrawBullet(moveManager.TopLevelMovers);
-		DrawBullet(moveManager.Movers);
-  }
+			// TODO: physics?
 
-  private void DrawBullet(IReadOnlyList<Mover> movers)
-  {
-	  for (var i = 0; i < movers.Count; ++i)
-	  {
-		  var mover = movers[i];
-		  
-		  if (!mover.Used) continue;
-
-		  Node2D bullet;
-		  if (bullets.ContainsKey(i))
-		  {
-			  bullet = bullets[i];
-		  }
-		  else
-		  {
-			  var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-			  bullet = scene.Instance() as Node2D;
-			  AddChild(bullet);
-			  bullets[i] = bullet;
-		  }
-			bullet.Position = mover.Position;
-	  }
-  }
-
-  private void AddBullet()
-	{
-		//clear out all the bullets
-		foreach (var child in GetChildren())
-		{
-			// TODO: object pooling
-			(child as Node).QueueFree();
+			moveManager.PostUpdate();
 		}
 
-		bullets.Clear();
-		moveManager.Clear();
+		private void AddBullet()
+		{
+			// clear out all the bullets
+			foreach (var child in GetChildren())
+			{
+				// TODO: object pooling
+				(child as Node2D)?.QueueFree();
+			}
 
-		//add a new bullet in the center of the screen
-		topLevelBullet = (Mover)moveManager.CreateTopBullet();
-		topLevelBullet.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y / 2f);
-		topLevelBullet.InitTopNode(myPatterns[currentPattern].RootNode);
+			moveManager.Clear();
+
+			// add a new bullet in the center of the screen (ish)
+			topLevelBullet = (Mover)moveManager.CreateTopBullet();
+			topLevelBullet.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y / 2f - 100f);
+			topLevelBullet.InitTopNode(myPatterns[currentPattern].RootNode);
+			
+			// Add a dummy player sprite
+      var scene = ResourceLoader.Load<PackedScene>("Player.tscn");
+      var player = scene.Instance() as Sprite;
+      player.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f);
+      AddChild(player);
+		}
 	}
 }

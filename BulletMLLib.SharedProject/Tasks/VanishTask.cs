@@ -1,6 +1,7 @@
 using System.Diagnostics;
+using BulletMLLib.SharedProject.Nodes;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Tasks
 {
 	/// <summary>
 	/// This task removes a bullet from the game.
@@ -10,7 +11,7 @@ namespace BulletMLLib
 		#region Methods
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLLib.BulletMLTask"/> class.
+		/// Initializes a new instance of the <see cref="BulletMLTask"/> class.
 		/// </summary>
 		/// <param name="node">Node.</param>
 		/// <param name="owner">Owner.</param>
@@ -29,7 +30,7 @@ namespace BulletMLLib
 		public override ERunStatus Run(Bullet bullet)
 		{
 			//remove the bullet via the bullet manager interface
-			IBulletManager manager = bullet.MyBulletManager;
+			var manager = bullet.MyBulletManager;
 			Debug.Assert(null != manager);
 			manager.RemoveBullet(bullet);
 			return ERunStatus.End;

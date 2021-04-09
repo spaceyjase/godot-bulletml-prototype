@@ -1,6 +1,6 @@
 using System;
 
-namespace BulletMLLib
+namespace BulletMLLib.SharedProject.Nodes
 {
 	/// <summary>
 	/// This is a simple class used to create different types of nodes.

@@ -6,6 +6,8 @@ namespace bulletmltemplate
 {
 	public class Main : Node2D
 	{
+		[Export] private PackedScene playerScene;
+		
 		// TODO: GameManager/Globals
 		public static float ViewportWidth => Instance.GetViewportRect().Size.x;
 		public static float ViewportHeight => Instance.GetViewportRect().Size.y;
@@ -17,11 +19,17 @@ namespace bulletmltemplate
 	
 		private int currentPattern;
 		private Mover topLevelBullet;
+		private Sprite playerInstance;	// TODO: PlayerManager
 
 		public Main()
 		{
 			Instance = this;
-			moveManager = new MoveManager(() => new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f));
+			moveManager = new MoveManager(GetPlayerPosition);
+		}
+
+		private Vector2 GetPlayerPosition()
+		{
+			return playerInstance?.Position ?? new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f);
 		}
 
 		public override void _Ready()
@@ -39,6 +47,13 @@ namespace bulletmltemplate
 			}
 
 			AddBullet();
+			
+			// Add a dummy player sprite
+      var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
+      if (!(scene.Instance() is Sprite player)) return;
+      playerInstance = player;
+      player.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f);
+      AddChild(player);
 		}
 
 		public override void _Process(float delta)
@@ -48,10 +63,6 @@ namespace bulletmltemplate
 			if (Input.IsActionJustPressed("ui_select"))
 			{
 				currentPattern++;
-				if (currentPattern >= myPatterns.Count)
-				{
-					currentPattern = 0;
-				}
 
 				AddBullet();
 		  
@@ -67,9 +78,15 @@ namespace bulletmltemplate
 
 		private void AddBullet()
 		{
+			var label = GetNode<Label>("Control/BulletPatternLabel");
+			label.Text = $"Pattern: {myPatterns[currentPattern % myPatterns.Count].Filename}";
+			label.Show();
+
 			// clear out all the bullets
 			foreach (var child in GetChildren())
 			{
+				if (child is Sprite) continue;	// HACK: the player
+				
 				// TODO: object pooling
 				(child as Node2D)?.QueueFree();
 			}
@@ -79,13 +96,7 @@ namespace bulletmltemplate
 			// add a new bullet in the center of the screen (ish)
 			topLevelBullet = (Mover)moveManager.CreateTopBullet();
 			topLevelBullet.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y / 2f - 100f);
-			topLevelBullet.InitTopNode(myPatterns[currentPattern].RootNode);
-			
-			// Add a dummy player sprite
-      var scene = ResourceLoader.Load<PackedScene>("Player.tscn");
-      var player = scene.Instance() as Sprite;
-      player.Position = new Vector2(GetViewportRect().Size.x / 2f, GetViewportRect().Size.y - 100f);
-      AddChild(player);
+			topLevelBullet.InitTopNode(myPatterns[currentPattern % myPatterns.Count].RootNode);
 		}
 	}
 }

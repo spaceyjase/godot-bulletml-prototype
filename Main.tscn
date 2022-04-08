@@ -12,7 +12,6 @@ margin_right = 40.0
 margin_bottom = 40.0
 
 [node name="BulletPatternLabel" type="Label" parent="Control"]
-visible = false
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 40.0

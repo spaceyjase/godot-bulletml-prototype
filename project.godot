@@ -18,6 +18,11 @@ config/name="bulletml-template"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
+[layer_names]
+
+2d_physics/layer_1="Player"
+2d_physics/layer_2="Bullet"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

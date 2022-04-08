@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using BulletMLLib.SharedProject.Nodes;
 using BulletMLLib.SharedProject.Tasks;
@@ -302,7 +303,7 @@ namespace BulletMLLib.SharedProject
 
 		/// <summary>
 		/// Finds the task by label.
-		/// This recurses into child tasks to find the taks with the correct label
+		/// This recurses into child tasks to find the task with the correct label
 		/// Used only for unit testing!
 		/// </summary>
 		/// <returns>The task by label.</returns>
@@ -349,17 +350,9 @@ namespace BulletMLLib.SharedProject
 		/// <returns></returns>
 		public bool TasksFinished()
 		{
-			for (var i = 0; i < Tasks.Count; i++)
-			{
-				if (!Tasks[i].TaskFinished)
-				{
-					//at least one of the tasks is still working
-					return false;
-				}
-			}
+			return Tasks.All(t => t.TaskFinished);
 
 			//all the tasks and their child tasks are done running
-			return true;
 		}
 
 		#endregion //Methods

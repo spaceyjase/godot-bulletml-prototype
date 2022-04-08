@@ -32,4 +32,9 @@ public class Player : Sprite
     position.y = Mathf.Clamp(position.y, 0f, GetViewport().Size.y);
     Position = position;
   }
+
+  private void _on_Area2D_area_entered(Node area)
+  {
+    GetNode<AnimationPlayer>(nameof(AnimationPlayer)).Play("hit");
+  }
 }

@@ -10,3 +10,7 @@ The original repository relies on the Microsoft Xna Framework. Here, this has be
 ![Screen](/screenshots/screen5.png)
 
 
+Use 'SPACE' to cycle through the bullet patterns.
+
+Cursor keys to move the player.
+

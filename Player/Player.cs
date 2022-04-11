@@ -10,22 +10,25 @@ public class Player : Sprite
   {
     base._Process(delta);
     
+    var movement = new Vector2();
+    
     if (Input.IsActionPressed("ui_right"))
     {
-      Position += new Vector2(movementSpeed * delta, 0f);
+      movement += Vector2.Right;
     }
     else if (Input.IsActionPressed("ui_left"))
     {
-      Position += new Vector2(-movementSpeed * delta, 0f);
+      movement += Vector2.Left;
     }
     if (Input.IsActionPressed("ui_up"))
     {
-      Position += new Vector2(0f, -movementSpeed * delta);
+      movement += Vector2.Up;
     }
     else if (Input.IsActionPressed("ui_down"))
     {
-      Position += new Vector2(0f, movementSpeed * delta);
+      movement += Vector2.Down;
     }
+    Position += movement.Normalized() * movementSpeed * delta;
 
     var position = Position;
     position.x = Mathf.Clamp(position.x, 0f, GetViewport().Size.x);

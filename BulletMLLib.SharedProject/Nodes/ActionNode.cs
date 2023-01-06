@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Nodes
 	/// <summary>
 	/// Action node... also the base class for actionref nodes
 	/// </summary>
-	public class ActionNode : BulletMLNode
+	public partial class ActionNode : BulletMLNode
 	{
 		#region Members
 

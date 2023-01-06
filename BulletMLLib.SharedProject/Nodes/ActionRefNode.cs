@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Nodes
 	/// Action reference node.
 	/// This node type references another Action node.
 	/// </summary>
-	public class ActionRefNode : ActionNode
+	public partial class ActionRefNode : ActionNode
 	{
 		#region Members
 

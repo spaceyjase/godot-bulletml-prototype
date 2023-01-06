@@ -8,7 +8,7 @@ namespace BulletMLLib.SharedProject
 	/// This is an equation used in BulletML nodes.
 	/// This is an eays way to set up the grammar for all our equations.
 	/// </summary>
-	public class BulletMLEquation : Equation
+	public partial class BulletMLEquation : Equation
 	{
 		/// <summary>
 		/// A randomizer for getting random values

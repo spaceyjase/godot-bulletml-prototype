@@ -1,7 +1,7 @@
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public class SpeedNode : BulletMLNode
+	public partial class SpeedNode : BulletMLNode
 	{
 		public SpeedNode() : base(ENodeName.speed)
 		{

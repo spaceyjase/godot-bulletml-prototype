@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// This task changes the speed a little bit every frame.
 	/// </summary>
-	public class ChangeSpeedTask : BulletMLTask
+	public partial class ChangeSpeedTask : BulletMLTask
 	{
 		#region Members
 

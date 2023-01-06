@@ -9,7 +9,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// This is a task..each task is the action from a single xml node, for one bullet.
 	/// basically each bullet makes a tree of these to match its pattern
 	/// </summary>
-	public class BulletMLTask
+	public partial class BulletMLTask
 	{
 		#region Members
 

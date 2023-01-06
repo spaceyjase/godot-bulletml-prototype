@@ -1,7 +1,7 @@
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public class AccelNode : BulletMLNode
+	public partial class AccelNode : BulletMLNode
 	{
 		public AccelNode() : base(ENodeName.accel)
 		{

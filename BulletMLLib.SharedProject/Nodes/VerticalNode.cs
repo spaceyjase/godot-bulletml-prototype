@@ -1,7 +1,7 @@
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public class VerticalNode : BulletMLNode
+	public partial class VerticalNode : BulletMLNode
 	{
 		public VerticalNode() : base(ENodeName.vertical)
 		{

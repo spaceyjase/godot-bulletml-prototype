@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// This action sets the velocity of a bullet
 	/// </summary>
-	public class SetSpeedTask : BulletMLTask
+	public partial class SetSpeedTask : BulletMLTask
 	{
 		#region Methods
 

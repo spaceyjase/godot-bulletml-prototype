@@ -9,7 +9,7 @@ namespace BulletMLLib.SharedProject
 	/// It seems like every task in a bullet has a corresponding firedata object
 	/// They are initialized to 0 and set by the task when that task is run.
 	/// </summary>
-	public class FireData
+	public partial class FireData
 	{
 		#region Members
 

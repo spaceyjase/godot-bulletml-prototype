@@ -8,7 +8,7 @@ namespace BulletMLLib.SharedProject
   /// <summary>
   /// This is a complete document that describes a bullet pattern.
   /// </summary>
-  public class BulletPattern
+  public partial class BulletPattern
   {
     #region Members
 

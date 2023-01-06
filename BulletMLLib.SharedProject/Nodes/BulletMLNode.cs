@@ -10,7 +10,7 @@ namespace BulletMLLib.SharedProject.Nodes
   /// This is a single node from a BulletML document.
   /// Used as the base node for all teh other node types.
   /// </summary>
-  public class BulletMLNode
+  public partial class BulletMLNode
   {
     /// <summary>
     /// The XML node name of this item

@@ -1,7 +1,7 @@
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public partial class TermNode : BulletMLNode
+	public class TermNode : BulletMLNode
 	{
 		public TermNode() : base(ENodeName.term)
 		{

@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// An action task, this dude contains a list of tasks that are repeated
 	/// </summary>
-	public partial class ActionTask : BulletMLTask
+	public class ActionTask : BulletMLTask
 	{
 		#region Members
 

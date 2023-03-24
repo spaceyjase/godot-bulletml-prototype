@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public partial class FireRefNode : FireNode
+	public class FireRefNode : FireNode
 	{
 		#region Members
 

@@ -7,7 +7,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// This task adds acceleration to a bullet.
 	/// </summary>
-	public partial class AccelTask : BulletMLTask
+	public class AccelTask : BulletMLTask
 	{
 		#region Members
 

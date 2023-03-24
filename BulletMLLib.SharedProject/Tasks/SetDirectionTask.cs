@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// This task sets the direction of a bullet
 	/// </summary>
-	public partial class SetDirectionTask : BulletMLTask
+	public class SetDirectionTask : BulletMLTask
 	{
 		#region Methods
 

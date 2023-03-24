@@ -6,7 +6,7 @@ namespace BulletMLLib.SharedProject.Tasks
 	/// <summary>
 	/// This task removes a bullet from the game.
 	/// </summary>
-	public partial class VanishTask : BulletMLTask
+	public class VanishTask : BulletMLTask
 	{
 		#region Methods
 

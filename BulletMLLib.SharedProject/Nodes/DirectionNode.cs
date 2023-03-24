@@ -1,7 +1,7 @@
 
 namespace BulletMLLib.SharedProject.Nodes
 {
-	public partial class DirectionNode : BulletMLNode
+	public class DirectionNode : BulletMLNode
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DirectionNode"/> class.

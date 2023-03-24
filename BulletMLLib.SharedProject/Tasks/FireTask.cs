@@ -7,7 +7,7 @@ namespace BulletMLLib.SharedProject.Tasks
   /// <summary>
   /// A task to shoot a bullet
   /// </summary>
-  public partial class FireTask : BulletMLTask
+  public class FireTask : BulletMLTask
   {
     #region Members
 

@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using BulletMLLib.SharedProject.Tasks;
 
@@ -11,19 +12,17 @@ namespace BulletMLLib.SharedProject.Nodes
   /// </summary>
   public class BulletMLNode
   {
-    #region Members
-
     /// <summary>
     /// The XML node name of this item
     /// </summary>
     public ENodeName Name { get; }
 
     /// <summary>
-		/// Gets or sets the type of the node.
-		/// This is virtual so sub-classes can override it and validate on their own.
-		/// </summary>
-		/// <value>The type of the node.</value>
-		public virtual ENodeType NodeType { get; protected set; } = ENodeType.none;
+    /// Gets or sets the type of the node.
+    /// This is virtual so sub-classes can override it and validate on their own.
+    /// </summary>
+    /// <value>The type of the node.</value>
+    public virtual ENodeType NodeType { get; protected set; } = ENodeType.none;
 
     /// <summary>
     /// The label of this node
@@ -35,7 +34,7 @@ namespace BulletMLLib.SharedProject.Nodes
     /// An equation used to get a value of this node.
     /// </summary>
     /// <value>The node value.</value>
-    protected BulletMLEquation NodeEquation = new BulletMLEquation();
+    protected BulletMLEquation NodeEquation = new();
 
     /// <summary>
     /// A list of all the child nodes for this dude
@@ -46,10 +45,6 @@ namespace BulletMLLib.SharedProject.Nodes
     /// pointer to the parent node of this dude
     /// </summary>
     protected BulletMLNode Parent { get; private set; }
-
-    #endregion //Members
-
-    #region Methods
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BulletMLNode"/> class.
@@ -66,7 +61,7 @@ namespace BulletMLLib.SharedProject.Nodes
     /// </summary>
     /// <returns>ENodeType: the nuem value of that string</returns>
     /// <param name="str">The string to convert to an enum</param>
-    public static ENodeType StringToType(string str)
+    private static ENodeType StringToType(string str)
     {
       //make sure there is something there
       if (string.IsNullOrEmpty(str))
@@ -80,9 +75,9 @@ namespace BulletMLLib.SharedProject.Nodes
     /// <summary>
     /// Convert a string to it's ENodeName enum equivalent
     /// </summary>
-    /// <returns>ENodeName: the nuem value of that string</returns>
+    /// <returns>ENodeName: the enum value of that string</returns>
     /// <param name="str">The string to convert to an enum</param>
-    public static ENodeName StringToName(string str)
+    private static ENodeName StringToName(string str)
     {
       return (ENodeName)Enum.Parse(typeof(ENodeName), str);
     }
@@ -91,7 +86,7 @@ namespace BulletMLLib.SharedProject.Nodes
     /// Gets the root node.
     /// </summary>
     /// <returns>The root node.</returns>
-    public BulletMLNode GetRootNode()
+    protected BulletMLNode GetRootNode()
     {
       //recurse up until we get to the root node
       return null != Parent ? Parent.GetRootNode() : this;
@@ -104,31 +99,20 @@ namespace BulletMLLib.SharedProject.Nodes
     /// <returns>The label node.</returns>
     /// <param name="label">Label of the node we are looking for</param>
     /// <param name="name">name of the node we are looking for</param>
-    public BulletMLNode FindLabelNode(string strLabel, ENodeName eName)
+    public BulletMLNode FindLabelNode(string label, ENodeName name)
     {
       //this uses breadth first search, since labelled nodes are usually top level
 
       //Check if any of our child nodes match the request
-      for (var i = 0; i < ChildNodes.Count; i++)
+      foreach (var t in ChildNodes.Where(t => name == t.Name && (label == t.Label)))
       {
-        if ((eName == ChildNodes[i].Name) && (strLabel == ChildNodes[i].Label))
-        {
-          return ChildNodes[i];
-        }
+        return t;
       }
 
       //recurse into the child nodes and see if we find any matches
-      for (var i = 0; i < ChildNodes.Count; i++)
-      {
-        var foundNode = ChildNodes[i].FindLabelNode(strLabel, eName);
-        if (null != foundNode)
-        {
-          return foundNode;
-        }
-      }
+      return ChildNodes.Select(t => t.FindLabelNode(label, name)).FirstOrDefault(foundNode => null != foundNode);
 
       //didnt find a BulletMLNode with that name :(
-      return null;
     }
 
     /// <summary>
@@ -144,14 +128,13 @@ namespace BulletMLLib.SharedProject.Nodes
         return null;
       }
 
-      if (nodeType == Parent.Name)
-      {
+      return nodeType == Parent.Name
+        ?
         //Our parent matches the query, return it!
-        return Parent;
-      }
-
-      //recurse into parent nodes to check grandparents, etc.
-      return Parent.FindParentNode(nodeType);
+        Parent
+        :
+        //recurse into parent nodes to check grandparents, etc.
+        Parent.FindParentNode(nodeType);
     }
 
     /// <summary>
@@ -161,34 +144,15 @@ namespace BulletMLLib.SharedProject.Nodes
     /// <param name="name">type of child node we want.</param>
     /// <param name="task">Task to get a value for</param>
     /// <param name="bullet">The bullet.</param>
-    public float GetChildValue(ENodeName name, BulletMLTask task, Bullet bullet)
-    {
-      foreach (var tree in ChildNodes)
-      {
-        if (tree.Name == name)
-        {
-          return tree.GetValue(task, bullet);
-        }
-      }
-      return 0.0f;
-    }
+    public float GetChildValue(ENodeName name, BulletMLTask task, Bullet bullet) =>
+      (from tree in ChildNodes where tree.Name == name select tree.GetValue(task, bullet)).FirstOrDefault();
 
     /// <summary>
     /// Get a direct child node of a specific type.  Does not recurse!
     /// </summary>
     /// <returns>The child.</returns>
     /// <param name="name">type of node we want. null if not found</param>
-    public BulletMLNode GetChild(ENodeName name)
-    {
-      foreach (var node in ChildNodes)
-      {
-        if (node.Name == name)
-        {
-          return node;
-        }
-      }
-      return null;
-    }
+    public BulletMLNode GetChild(ENodeName name) => ChildNodes.FirstOrDefault(node => node.Name == name);
 
     /// <summary>
     /// Gets the value of this node for a specific instance of a task.
@@ -202,19 +166,18 @@ namespace BulletMLLib.SharedProject.Nodes
       return (float)NodeEquation.Solve(task.GetParamValue, bullet.MyBulletManager.Tier);
     }
 
-    #region XML Methods
-
     /// <summary>
     /// Parse the specified bulletNodeElement.
     /// Read all the data from the xml node into this dude.
     /// </summary>
     /// <param name="bulletNodeElement">Bullet node element.</param>
+    /// <param name="parentNode"></param>
     public void Parse(XmlNode bulletNodeElement, BulletMLNode parentNode)
     {
       // Handle null argument.
       if (null == bulletNodeElement)
       {
-        throw new ArgumentNullException("bulletNodeElement");
+        throw new ArgumentNullException(nameof(bulletNodeElement));
       }
 
       //grab the parent node
@@ -222,10 +185,10 @@ namespace BulletMLLib.SharedProject.Nodes
 
       //Parse all our attributes
       XmlNamedNodeMap mapAttributes = bulletNodeElement.Attributes;
-      for (var i = 0; i < mapAttributes.Count; i++)
+      for (var i = 0; i < mapAttributes!.Count; i++)
       {
-        var strName = mapAttributes.Item(i).Name;
-        var strValue = mapAttributes.Item(i).Value;
+        var strName = mapAttributes.Item(i)!.Name;
+        var strValue = mapAttributes.Item(i)!.Value;
 
         switch (strName)
         {
@@ -247,8 +210,8 @@ namespace BulletMLLib.SharedProject.Nodes
       if (!bulletNodeElement.HasChildNodes) return;
 
       for (var childNode = bulletNodeElement.FirstChild;
-        null != childNode;
-        childNode = childNode.NextSibling)
+           null != childNode;
+           childNode = childNode.NextSibling)
       {
         switch (childNode.NodeType)
         {
@@ -263,7 +226,6 @@ namespace BulletMLLib.SharedProject.Nodes
           default:
             //create a new node
             var childBulletNode = NodeFactory.CreateNode(StringToName(childNode.Name));
-
             //read in the node and store it
             childBulletNode.Parse(childNode, this);
             ChildNodes.Add(childBulletNode);
@@ -279,15 +241,11 @@ namespace BulletMLLib.SharedProject.Nodes
     /// </summary>
     public virtual void ValidateNode()
     {
-      //validate all the childe nodes
+      //validate all the child nodes
       foreach (var childNode in ChildNodes)
       {
         childNode.ValidateNode();
       }
     }
-
-    #endregion //XML Methods
-
-    #endregion //Methods
   }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using BulletMLLib.SharedProject.Nodes;
 
@@ -182,36 +182,23 @@ namespace BulletMLLib.SharedProject.Tasks
       //get the direction to shoot the bullet
 
       //is this the first time it has ran?  If there isn't a sequence node, we don't care!
-      if (InitialRun || (null == SequenceDirectionTask))
+      if (InitialRun || null == SequenceDirectionTask)
       {
         //do we have an initial direction node?
         if (null != InitialDirectionTask)
         {
           //Set the fire direction to the "initial" value
           var newBulletDirection = InitialDirectionTask.GetNodeValue(bullet) * (float)Math.PI / 180.0f;
-          switch (InitialDirectionTask.Node.NodeType)
+          FireDirection = InitialDirectionTask.Node.NodeType switch
           {
-            case ENodeType.absolute:
-              {
-                //the new bullet points right at a particular direction
-                FireDirection = newBulletDirection;
-              }
-              break;
-
-            case ENodeType.relative:
-              {
-                //the new bullet direction will be relative to the old bullet
-                FireDirection = newBulletDirection + bullet.Direction;
-              }
-              break;
-
-            default:
-              {
-                //aim the bullet at the player
-                FireDirection = newBulletDirection + bullet.GetAimDir();
-              }
-              break;
-          }
+            ENodeType.absolute =>
+              //the new bullet points right at a particular direction
+              newBulletDirection,
+            ENodeType.relative =>
+              //the new bullet direction will be relative to the old bullet
+              newBulletDirection + bullet.Direction,
+            _ => newBulletDirection + bullet.GetAimDir()
+          };
         }
         else
         {
@@ -220,7 +207,7 @@ namespace BulletMLLib.SharedProject.Tasks
           FireDirection = bullet.GetAimDir();
         }
       }
-      else if (null != SequenceDirectionTask)
+      else
       {
         //else if there is a sequence node, add the value to the "shoot direction"
         FireDirection += SequenceDirectionTask.GetNodeValue(bullet) * (float)Math.PI / 180.0f;
@@ -236,22 +223,13 @@ namespace BulletMLLib.SharedProject.Tasks
         {
           //set the shoot speed to the "initial" value.
           var newBulletSpeed = InitialSpeedTask.GetNodeValue(bullet);
-          switch (InitialSpeedTask.Node.NodeType)
+          FireSpeed = InitialSpeedTask.Node.NodeType switch
           {
-            case ENodeType.relative:
-              {
-                //the new bullet speed will be relative to the old bullet
-                FireSpeed = newBulletSpeed + bullet.Speed;
-              }
-              break;
-
-            default:
-              {
-                //the new bullet shoots at a predeterminde speed
-                FireSpeed = newBulletSpeed;
-              }
-              break;
-          }
+            ENodeType.relative =>
+              //the new bullet speed will be relative to the old bullet
+              newBulletSpeed + bullet.Speed,
+            _ => newBulletSpeed
+          };
         }
         else
         {
@@ -259,7 +237,7 @@ namespace BulletMLLib.SharedProject.Tasks
           FireSpeed = bullet.Speed;
         }
       }
-      else if (null != SequenceSpeedTask)
+      else
       {
         //else if there is a sequence node, add the value to the "shoot direction"
         FireSpeed += SequenceSpeedTask.GetNodeValue(bullet);

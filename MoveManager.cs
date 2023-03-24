@@ -13,8 +13,8 @@ namespace bulletmltemplate
     private const float timeSpeed = 1.0f;
     private const float scale = 1.0f;
 
-    private readonly List<Mover> movers = new List<Mover>();
-    private readonly List<Mover> topLevelMovers = new List<Mover>();
+    private readonly List<Mover> movers = new();
+    private readonly List<Mover> topLevelMovers = new();
 
     private readonly PositionDelegate GetPlayerPosition;
 
@@ -44,7 +44,7 @@ namespace bulletmltemplate
       for (var i = 0; i < movers.Count; i++)
       {
         if (movers[i].Used) continue;
-        movers.Remove(movers[i]);
+        movers.RemoveAt(i);
         i--;
       }
 

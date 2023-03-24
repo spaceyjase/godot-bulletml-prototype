@@ -13,7 +13,7 @@ namespace BulletMLLib.SharedProject
 		/// <summary>
 		/// A randomizer for getting random values
 		/// </summary>
-		private static readonly Random g_Random = new Random(DateTime.Now.Millisecond);
+		private static readonly Random g_Random = new(DateTime.Now.Millisecond);
 
 		public BulletMLEquation()
 		{

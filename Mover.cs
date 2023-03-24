@@ -27,11 +27,11 @@ namespace bulletmltemplate
   
     public override float X
     {
-      get => Position.x;
+      get => Position.X;
       set
       { 
         var position = Position;
-        position.x = value;
+        position.X = value;
         Position = position;
       
         BulletNode.Position = Position;
@@ -40,11 +40,11 @@ namespace bulletmltemplate
 
     public override float Y
     {
-      get => Position.y;
+      get => Position.Y;
       set
       { 
         var position = Position;
-        position.y = value;
+        position.Y = value;
         Position = position;
       
         BulletNode.Position = Position;
@@ -68,7 +68,7 @@ namespace bulletmltemplate
     {
       ParentNode = Main.Instance;
       var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
-      BulletNode = scene.Instance() as Node2D;
+      BulletNode = scene.Instantiate() as Node2D;
       ParentNode.AddChild(BulletNode);
     
       Used = true;

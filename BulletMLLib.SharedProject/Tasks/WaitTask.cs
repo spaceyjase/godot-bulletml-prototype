@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using BulletMLLib.SharedProject.Nodes;
 
 namespace BulletMLLib.SharedProject.Tasks
@@ -53,11 +53,9 @@ namespace BulletMLLib.SharedProject.Tasks
 			{
 				return ERunStatus.Stop;
 			}
-			else
-			{
-				TaskFinished = true;
-				return ERunStatus.End;
-			}
+
+			TaskFinished = true;
+			return ERunStatus.End;
 		}
 
 		#endregion //Methods

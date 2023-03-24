@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -201,8 +201,8 @@ namespace BulletMLLib.SharedProject
 							var newDude = _bulletManager.CreateTopBullet();
 
 							//set the position to this dude's position
-							newDude.X = this.X;
-							newDude.Y = this.Y;
+							newDude.X = X;
+							newDude.Y = Y;
 
 							//initialize with the node we found
 							newDude.InitNode(topNode);
@@ -275,8 +275,8 @@ namespace BulletMLLib.SharedProject
 
 			//only do this stuff if the bullet isn't done, cuz sin/cosin are expensive
 			var vel = (Acceleration + (Direction.ToVector2() * (Speed * TimeSpeed))) * Scale;
-			X += vel.x;
-			Y += vel.y;
+			X += vel.X;
+			Y += vel.Y;
 		}
 
 		/// <summary>

@@ -8,5 +8,5 @@ namespace BulletMLLib.SharedProject
 		absolute,
 		relative,
 		sequence
-	};
+	}
 }

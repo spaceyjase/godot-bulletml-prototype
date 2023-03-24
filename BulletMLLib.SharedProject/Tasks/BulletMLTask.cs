@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using BulletMLLib.SharedProject.Nodes;
@@ -53,8 +53,8 @@ namespace BulletMLLib.SharedProject.Tasks
 			ChildTasks = new List<BulletMLTask>();
 			ParamList = new List<float>();
 			TaskFinished = false;
-			this.Owner = owner;
-			this.Node = node ?? throw new NullReferenceException("node argument cannot be null"); 
+			Owner = owner;
+			Node = node ?? throw new NullReferenceException("node argument cannot be null"); 
 		}
 
 		/// <summary>

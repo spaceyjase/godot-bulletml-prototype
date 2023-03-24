@@ -1,4 +1,4 @@
-﻿
+
 using Godot;
 
 namespace BulletMLLib.SharedProject

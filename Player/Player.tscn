@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Player/Player.cs" type="Script" id=1]
-[ext_resource path="res://textures.png" type="Texture" id=2]
+[ext_resource path="res://textures.png" type="Texture2D" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 5.0
@@ -15,13 +15,13 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array( 0, 0.2, 0.4, 0.6, 0.8, 1 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[node name="Player" type="Sprite"]
+[node name="Player" type="Sprite2D"]
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 region_enabled = true

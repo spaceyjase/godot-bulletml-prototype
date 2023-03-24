@@ -22,33 +22,13 @@ namespace BulletMLLib.SharedProject.Nodes
 			get => base.NodeType;
 			protected set
 			{
-				switch (value)
+				base.NodeType = value switch
 				{
-					case ENodeType.absolute:
-					{
-						base.NodeType = value;
-					}
-					break;
-
-					case ENodeType.relative:
-					{
-						base.NodeType = value;
-					}
-					break;
-
-					case ENodeType.sequence:
-					{
-						base.NodeType = value;
-					}
-					break;
-
-					default:
-					{
-						//All other node types default to aim, because otherwise they are wrong!
-						base.NodeType = ENodeType.aim;
-					}
-					break;
-				}
+					ENodeType.absolute => value,
+					ENodeType.relative => value,
+					ENodeType.sequence => value,
+					_ => ENodeType.aim
+				};
 			}
 		}
 	}

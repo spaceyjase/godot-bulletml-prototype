@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using BulletMLLib.SharedProject.Nodes;
 
 namespace BulletMLLib.SharedProject.Tasks

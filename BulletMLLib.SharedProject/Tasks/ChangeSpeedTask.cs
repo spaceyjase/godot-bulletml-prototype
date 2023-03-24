@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using BulletMLLib.SharedProject.Nodes;
 
 namespace BulletMLLib.SharedProject.Tasks
@@ -64,25 +64,14 @@ namespace BulletMLLib.SharedProject.Tasks
 			ChangeType = Node.GetChild(ENodeName.speed).NodeType;
 		}
 
-		private float GetSpeed(Bullet bullet)
+		private float GetVelocity(Bullet bullet)
 		{
-			switch (ChangeType)
+			return ChangeType switch
 			{
-				case ENodeType.sequence:
-				{
-					return NodeSpeed;
-				}
-
-				case ENodeType.relative:
-				{
-					return NodeSpeed / Duration;
-				}
-
-				default:
-				{
-					return ((NodeSpeed - bullet.Speed) / (Duration - RunDelta));
-				}
-			}
+				ENodeType.sequence => NodeSpeed,
+				ENodeType.relative => NodeSpeed / Duration,
+				_ => ((NodeSpeed - bullet.Speed) / (Duration - RunDelta))
+			};
 		}
 
 		/// <summary>
@@ -93,7 +82,7 @@ namespace BulletMLLib.SharedProject.Tasks
 		/// <param name="bullet">The bullet to update this task against.</param>
 		public override ERunStatus Run(Bullet bullet)
 		{
-			bullet.Speed += GetSpeed(bullet);
+			bullet.Speed += GetVelocity(bullet);
 
 			RunDelta += 1.0f * bullet.TimeSpeed;
 			if (Duration <= RunDelta)
@@ -101,11 +90,9 @@ namespace BulletMLLib.SharedProject.Tasks
 				TaskFinished = true;
 				return ERunStatus.End;
 			}
-			else
-			{
-				//since this task isn't finished, run it again next time
-				return ERunStatus.Continue;
-			}
+
+			//since this task isn't finished, run it again next time
+			return ERunStatus.Continue;
 		}
 
 		#endregion //Methods

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace BulletMLLib.SharedProject
 {
@@ -6,20 +6,26 @@ namespace BulletMLLib.SharedProject
   {
     /// <summary>Represents the mathematical constant e(2.71828175).</summary>
     public const float E = 2.718282f;
+
     /// <summary>Represents the log base ten of e(0.4342945).</summary>
     public const float Log10E = 0.4342945f;
+
     /// <summary>Represents the log base two of e(1.442695).</summary>
     public const float Log2E = 1.442695f;
+
     /// <summary>Represents the value of pi(3.14159274).</summary>
     public const float Pi = 3.141593f;
+
     /// <summary>
     /// Represents the value of pi divided by two(1.57079637).
     /// </summary>
     public const float PiOver2 = 1.570796f;
+
     /// <summary>
     /// Represents the value of pi divided by four(0.7853982).
     /// </summary>
     public const float PiOver4 = 0.7853982f;
+
     /// <summary>Represents the value of pi times two(6.28318548).</summary>
     public const float TwoPi = 6.283185f;
 
@@ -39,7 +45,7 @@ namespace BulletMLLib.SharedProject
       float amount1,
       float amount2)
     {
-      return (float) (value1 + (value2 - (double) value1) * amount1 + (value3 - (double) value1) * amount2);
+      return (float)(value1 + (value2 - (double)value1) * amount1 + (value3 - (double)value1) * amount2);
     }
 
     /// <summary>
@@ -58,9 +64,11 @@ namespace BulletMLLib.SharedProject
       float value4,
       float amount)
     {
-      var num1 = amount * (double) amount;
+      var num1 = amount * (double)amount;
       var num2 = num1 * amount;
-      return (float) (0.5 * (2.0 * value2 + (value3 - (double) value1) * amount + (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * num1 + (3.0 * value2 - value1 - 3.0 * value3 + value4) * num2));
+      return (float)(0.5 * (2.0 * value2 + (value3 - (double)value1) * amount +
+                            (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * num1 +
+                            (3.0 * value2 - value1 - 3.0 * value3 + value4) * num2));
     }
 
     /// <summary>Restricts a value to be within a specified range.</summary>
@@ -70,8 +78,8 @@ namespace BulletMLLib.SharedProject
     /// <returns>The clamped value.</returns>
     public static float Clamp(float value, float min, float max)
     {
-      value = value > (double) max ? max : value;
-      value = value < (double) min ? min : value;
+      value = value > (double)max ? max : value;
+      value = value < (double)min ? min : value;
       return value;
     }
 
@@ -102,7 +110,7 @@ namespace BulletMLLib.SharedProject
     /// <param name="tangent2">Source tangent.</param>
     /// <param name="amount">Weighting factor.</param>
     /// <returns>The result of the Hermite spline interpolation.</returns>
-    public static float Hermite(
+    private static float Hermite(
       float value1,
       float tangent1,
       float value2,
@@ -116,7 +124,12 @@ namespace BulletMLLib.SharedProject
       double num5 = amount;
       var num6 = num5 * num5 * num5;
       var num7 = num5 * num5;
-      return amount != 0.0 ? (amount != 1.0 ? (float) ((2.0 * num1 - 2.0 * num2 + num4 + num3) * num6 + (3.0 * num2 - 3.0 * num1 - 2.0 * num3 - num4) * num7 + num3 * num5 + num1) : value2) : value1;
+      return amount != 0.0
+        ? Math.Abs(amount - 1.0) > float.Epsilon
+          ? (float)((2.0 * num1 - 2.0 * num2 + num4 + num3) * num6 +
+                    (3.0 * num2 - 3.0 * num1 - 2.0 * num3 - num4) * num7 + num3 * num5 + num1)
+          : value2
+        : value1;
     }
 
     /// <summary>Linearly interpolates between two values.</summary>
@@ -151,13 +164,14 @@ namespace BulletMLLib.SharedProject
     /// Relevant Wikipedia Article: https://en.wikipedia.org/wiki/Linear_interpolation#Programming_language_support
     /// Relevant StackOverflow Answer: http://stackoverflow.com/questions/4353525/floating-point-linear-interpolation#answer-23716956
     /// </remarks>
-    public static float LerpPrecise(float value1, float value2, float amount) => (float) ((1.0 - amount) * value1 + value2 * (double) amount);
+    public static float LerpPrecise(float value1, float value2, float amount) =>
+      (float)((1.0 - amount) * value1 + value2 * (double)amount);
 
     /// <summary>Returns the greater of two values.</summary>
     /// <param name="value1">Source value.</param>
     /// <param name="value2">Source value.</param>
     /// <returns>The greater value.</returns>
-    public static float Max(float value1, float value2) => value1 <= (double) value2 ? value2 : value1;
+    public static float Max(float value1, float value2) => value1 <= (double)value2 ? value2 : value1;
 
     /// <summary>Returns the greater of two values.</summary>
     /// <param name="value1">Source value.</param>
@@ -169,7 +183,7 @@ namespace BulletMLLib.SharedProject
     /// <param name="value1">Source value.</param>
     /// <param name="value2">Source value.</param>
     /// <returns>The lesser value.</returns>
-    public static float Min(float value1, float value2) => value1 >= (double) value2 ? value2 : value1;
+    public static float Min(float value1, float value2) => value1 >= (double)value2 ? value2 : value1;
 
     /// <summary>Returns the lesser of two values.</summary>
     /// <param name="value1">Source value.</param>
@@ -186,8 +200,8 @@ namespace BulletMLLib.SharedProject
     /// <returns>Interpolated value.</returns>
     public static float SmoothStep(float value1, float value2, float amount)
     {
-      var amount1 = MathHelper.Clamp(amount, 0.0f, 1f);
-      return MathHelper.Hermite(value1, 0.0f, value2, 0.0f, amount1);
+      var amount1 = Clamp(amount, 0.0f, 1f);
+      return Hermite(value1, 0.0f, value2, 0.0f, amount1);
     }
 
     /// <summary>Converts radians to degrees.</summary>
@@ -215,7 +229,7 @@ namespace BulletMLLib.SharedProject
     /// <returns>The new angle, in radians.</returns>
     public static float WrapAngle(float angle)
     {
-      angle = (float) Math.IEEERemainder(angle, 6.28318548202515);
+      angle = (float)Math.IEEERemainder(angle, 6.28318548202515);
       if (angle <= -3.14159274101257)
         angle += 6.283185f;
       else if (angle > 3.14159274101257)

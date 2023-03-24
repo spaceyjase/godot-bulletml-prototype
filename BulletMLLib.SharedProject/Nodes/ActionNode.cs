@@ -86,11 +86,9 @@ namespace BulletMLLib.SharedProject.Nodes
 				//Get the equation value of the repeat node
 				return (int)ParentRepeatNode.GetChildValue(ENodeName.times, myTask, bullet);
 			}
-			else
-			{
-				//no repeat nodes, just repeat it once
-				return 1;
-			}
+
+			//no repeat nodes, just repeat it once
+			return 1;
 		}
 
 		#endregion //Methods

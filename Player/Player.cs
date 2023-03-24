@@ -1,17 +1,16 @@
 using Godot;
-using System;
 
-public class Player : Sprite
+public partial class Player : Sprite2D
 {
-  [Export]
-  private float movementSpeed = 400f;
-  
-  public override void _Process(float delta)
+  [Export] private float movementSpeed = 400f;
+
+  public override void _Process(double _delta)
   {
+    var delta = (float)_delta;
     base._Process(delta);
-    
+
     var movement = new Vector2();
-    
+
     if (Input.IsActionPressed("ui_right"))
     {
       movement += Vector2.Right;
@@ -20,6 +19,7 @@ public class Player : Sprite
     {
       movement += Vector2.Left;
     }
+
     if (Input.IsActionPressed("ui_up"))
     {
       movement += Vector2.Up;
@@ -28,11 +28,12 @@ public class Player : Sprite
     {
       movement += Vector2.Down;
     }
+
     Position += movement.Normalized() * movementSpeed * delta;
 
     var position = Position;
-    position.x = Mathf.Clamp(position.x, 0f, GetViewport().Size.x);
-    position.y = Mathf.Clamp(position.y, 0f, GetViewport().Size.y);
+    position.X = Mathf.Clamp(position.X, 0f, GetViewportRect().Size.X);
+    position.Y = Mathf.Clamp(position.Y, 0f, GetViewportRect().Size.Y);
     Position = position;
   }
 

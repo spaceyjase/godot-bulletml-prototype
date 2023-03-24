@@ -23,5 +23,5 @@ namespace BulletMLLib.SharedProject
 		speed, 
 		param,
 		bulletml
-	};
+	}
 }

@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2e6i83nejcwg"]
+
+[ext_resource type="Script" path="res://Main.cs" id="1_adi6t"]
+[ext_resource type="PackedScene" uid="uid://q1ko6wm8qmah" path="res://Player/Player3D.tscn" id="2_vcre2"]
+
+[node name="Main3D" type="Node3D" node_paths=PackedStringArray("label", "playerInstance")]
+script = ExtResource("1_adi6t")
+UseXZ = true
+playerScene = ExtResource("2_vcre2")
+PlayerSpawnPosition = Vector2(0, 30)
+label = NodePath("CanvasLayer/Control/BulletPatternLabel")
+playerInstance = NodePath("Sprite3D")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BulletPatternLabel" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 40.0
+offset_bottom = 14.0
+text = "BULLET PATTERN"
+
+[node name="Sprite3D" parent="." instance=ExtResource("2_vcre2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+movementSpeed = 10.0
+
+[node name="Camera3D" type="Camera3D" parent="Sprite3D"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, -0.869379, 5.12404, 9.62896)

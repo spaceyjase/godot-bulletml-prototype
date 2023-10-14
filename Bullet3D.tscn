@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://ban4ayp5ge0rv"]
+
+[ext_resource type="Texture2D" uid="uid://ce0uacckuahn1" path="res://bullet.png" id="1_a23a7"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ep71q"]
+
+[node name="Sprite3D" type="Sprite3D"]
+pixel_size = 0.1
+billboard = 1
+texture = ExtResource("1_a23a7")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_ep71q")

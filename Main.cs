@@ -5,39 +5,49 @@ using Godot;
 
 namespace bulletmltemplate
 {
-	public partial class Main : Node2D
+	public partial class Main : Node
 	{
+		[Export] private bool UseXZ = false;
 		[Export] private PackedScene playerScene;
-		
+		[Export] private Vector2 PlayerSpawnPosition;
+		[Export] private Label label;
 		// TODO: GameManager/Globals
-		public static float ViewportWidth => Instance.GetViewportRect().Size.X;
-		public static float ViewportHeight => Instance.GetViewportRect().Size.Y;
 		public static Main Instance { get; private set; }
 
 		private readonly List<BulletPattern> myPatterns = new();
 
 		private readonly MoveManager moveManager;
-	
+		public static Vector2 Viewport;
 		private int currentPattern;
 		private Mover topLevelBullet;
-		private Sprite2D playerInstance;	// TODO: PlayerManager
+		[Export] private Node playerInstance;	// TODO: PlayerManager
 
 		public Main()
 		{
 			Instance = this;
 			moveManager = new MoveManager(GetPlayerPosition);
+			Viewport = new Vector2(
+				(float)ProjectSettings.GetSetting("display/window/size/viewport_width"),
+				(float)ProjectSettings.GetSetting("display/window/size/viewport_height")
+			);
 		}
 
 		private Vector2 GetPlayerPosition()
 		{
-			return playerInstance?.Position ?? new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
-		}
 
+			if (playerInstance!=null){
+				return new Vector2(
+					GameManager.UseXZ?(playerInstance as Node3D).GlobalPosition.X:(playerInstance as Node2D).GlobalPosition.X,
+					GameManager.UseXZ?(playerInstance as Node3D).GlobalPosition.Z:(playerInstance as Node2D).GlobalPosition.Y
+				);
+			} else return PlayerSpawnPosition; 
+		}
 		public override void _Ready()
 		{
 			base._Ready();
 
 			GameManager.GameDifficulty = () => 1.0f;
+			GameManager.UseXZ = UseXZ;
 			
 			foreach (var source in Directory.GetFiles("./samples", "*.xml"))
 			{
@@ -50,11 +60,14 @@ namespace bulletmltemplate
 			AddBullet();
 			
 			// Add a dummy player sprite
-	  var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
-	  if (!(scene.Instantiate() is Sprite2D player)) return;
-	  playerInstance = player;
-	  player.Position = new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
-	  AddChild(player);
+			if (playerInstance==null){
+	  			var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
+				if (!(scene.Instantiate() is Node player)) return;
+				playerInstance = player;
+				if (UseXZ) (player as Node3D).Position = new Vector3(PlayerSpawnPosition.X, 0, PlayerSpawnPosition.Y)
+;				else (player as Node2D).Position = PlayerSpawnPosition;
+				AddChild(player);
+			}
 		}
 
 		public override void _Process(double bigDelta)
@@ -80,7 +93,7 @@ namespace bulletmltemplate
 
 		private void AddBullet()
 		{
-			var label = GetNode<Label>("Control/BulletPatternLabel");
+			// var label = GetNode<Label>("Control/BulletPatternLabel");
 			label.Text = $"Pattern: {myPatterns[currentPattern % myPatterns.Count].Filename}";
 			label.Show();
 
@@ -97,7 +110,7 @@ namespace bulletmltemplate
 
 			// add a new bullet in the center of the screen (ish)
 			topLevelBullet = (Mover)moveManager.CreateTopBullet();
-			topLevelBullet.Position = new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y / 2f - 100f);
+			topLevelBullet.Position =  GameManager.UseXZ?Vector2.Zero:new Vector2(Viewport.X/2, (Viewport.Y/2)-100);
 			topLevelBullet.InitTopNode(myPatterns[currentPattern % myPatterns.Count].RootNode);
 		}
 	}

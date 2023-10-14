@@ -15,6 +15,8 @@ namespace BulletMLLib.SharedProject
 		/// You need to set this at the start of the game
 		/// </summary>
 		static public FloatDelegate GameDifficulty;
+
+		static public bool UseXZ;
 	}
 }
 

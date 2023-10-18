@@ -45,6 +45,7 @@ namespace bulletmltemplate
             {
                 if (movers[i].Used)
                     continue;
+
                 movers.RemoveAt(i);
                 i--;
             }
@@ -54,6 +55,7 @@ namespace bulletmltemplate
             {
                 if (!topLevelMovers[i].TasksFinished())
                     continue;
+
                 topLevelMovers.RemoveAt(i);
                 i--;
             }

@@ -51,7 +51,7 @@ namespace BulletMLLib.SharedProject
         public static Vector2 Normalized(this Vector2 myVector)
         {
             var num = myVector.Length();
-            return new Vector2(myVector.X / num, myVector.Y / num);
+            return new(myVector.X / num, myVector.Y / num);
         }
     }
 }

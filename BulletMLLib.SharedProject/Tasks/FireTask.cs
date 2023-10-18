@@ -130,7 +130,7 @@ namespace BulletMLLib.SharedProject.Tasks
                     {
                         //Create a task for the bullet ref
                         if (childNode is BulletRefNode refNode)
-                            BulletRefTask = new BulletMLTask(refNode.ReferencedBulletNode, this);
+                            BulletRefTask = new(refNode.ReferencedBulletNode, this);
 
                         //populate the params of the bullet ref
                         foreach (var node in childNode.ChildNodes)
@@ -147,7 +147,7 @@ namespace BulletMLLib.SharedProject.Tasks
 
                     {
                         //Create a task for the bullet ref
-                        BulletRefTask = new BulletMLTask(childNode, this);
+                        BulletRefTask = new(childNode, this);
                         BulletRefTask.ParseTasks(bullet);
                         ChildTasks.Add(BulletRefTask);
                     }
@@ -207,8 +207,7 @@ namespace BulletMLLib.SharedProject.Tasks
                 }
                 else
                 {
-                    //There isn't an initial direction task, so just aim at the bad guy.
-                    //aim the bullet at the player
+                    //There isn't an initial direction task, so aim the bullet at the player
                     FireDirection = bullet.GetAimDir();
                 }
             }
@@ -289,7 +288,7 @@ namespace BulletMLLib.SharedProject.Tasks
             //set the direction of the new bullet
             newBullet.Direction = FireDirection;
 
-            //set teh speed of the new bullet
+            //set the speed of the new bullet
             newBullet.Speed = FireSpeed;
 
             //initialize the bullet with the bullet node stored in the Fire node
@@ -314,27 +313,19 @@ namespace BulletMLLib.SharedProject.Tasks
         private void GetDirectionTasks(BulletMLTask taskToCheck)
         {
             //check if the dude has a direction node
-            if (!(taskToCheck?.Node.GetChild(ENodeName.direction) is DirectionNode dirNode))
+            if (taskToCheck?.Node.GetChild(ENodeName.direction) is not DirectionNode dirNode)
                 return;
 
             //check if it is a sequence type of node
             if (ENodeType.sequence == dirNode.NodeType)
             {
                 //do we need a sequence node?
-                if (null == SequenceDirectionTask)
-                {
-                    //store it in the sequence direction node
-                    SequenceDirectionTask = new SetDirectionTask(dirNode, taskToCheck);
-                }
+                SequenceDirectionTask ??= new(dirNode, taskToCheck);
             }
             else
             {
                 //else do we need an initial node?
-                if (null == InitialDirectionTask)
-                {
-                    //store it in the initial direction node
-                    InitialDirectionTask = new SetDirectionTask(dirNode, taskToCheck);
-                }
+                InitialDirectionTask ??= new(dirNode, taskToCheck);
             }
         }
 
@@ -345,27 +336,19 @@ namespace BulletMLLib.SharedProject.Tasks
         private void GetSpeedNodes(BulletMLTask taskToCheck)
         {
             //check if the dude has a speed node
-            if (!(taskToCheck?.Node.GetChild(ENodeName.speed) is SpeedNode spdNode))
+            if (taskToCheck?.Node.GetChild(ENodeName.speed) is not SpeedNode spdNode)
                 return;
 
             //check if it is a sequence type of node
             if (ENodeType.sequence == spdNode.NodeType)
             {
                 //do we need a sequence node?
-                if (null == SequenceSpeedTask)
-                {
-                    //store it in the sequence speed node
-                    SequenceSpeedTask = new SetSpeedTask(spdNode, taskToCheck);
-                }
+                SequenceSpeedTask ??= new(spdNode, taskToCheck);
             }
             else
             {
                 //else do we need an initial node?
-                if (null == InitialSpeedTask)
-                {
-                    //store it in the initial speed node
-                    InitialSpeedTask = new SetSpeedTask(spdNode, taskToCheck);
-                }
+                InitialSpeedTask ??= new(spdNode, taskToCheck);
             }
         }
 

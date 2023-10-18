@@ -86,7 +86,7 @@ namespace BulletMLLib.SharedProject.Tasks
                     =>
                     //The direction change will be relative to our current direction
                     NodeDirection,
-                _ => ((NodeDirection + bullet.GetAimDir()) - bullet.Direction)
+                _ => (NodeDirection + bullet.GetAimDir()) - bullet.Direction
             };
 
             //keep the direction between -180 and 180

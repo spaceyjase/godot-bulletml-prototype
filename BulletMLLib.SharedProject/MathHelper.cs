@@ -247,12 +247,12 @@ namespace BulletMLLib.SharedProject
         /// <returns>The new angle, in radians.</returns>
         public static float WrapAngle(float angle)
         {
-            angle = (float)Math.IEEERemainder(angle, 6.28318548202515);
-            if (angle <= -3.14159274101257)
-                angle += 6.283185f;
-            else if (angle > 3.14159274101257)
-                angle -= 6.283185f;
-            return angle;
+            if (angle > -3.1415927410125732 && angle <= 3.1415927410125732)
+                return angle;
+            angle %= 6.2831855f;
+            if (angle <= -3.1415927410125732)
+                return angle + 6.2831855f;
+            return angle > 3.1415927410125732 ? angle - 6.2831855f : angle;
         }
 
         /// <summary>Determines if value is powered by two.</summary>

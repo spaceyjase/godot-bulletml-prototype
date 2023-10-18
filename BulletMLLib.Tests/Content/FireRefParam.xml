@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fireRef label="test">
+			<param>15</param>
+		</fireRef>
+	</action>
+	<fire label="test">
+		<speed>$1</speed>
+		<bullet label="testBullet">
+		</bullet>
+	</fire>
+</bulletml>

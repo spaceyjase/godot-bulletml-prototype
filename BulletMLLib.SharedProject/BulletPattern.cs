@@ -88,7 +88,7 @@ namespace BulletMLLib.SharedProject
             catch (Exception ex)
             {
                 //an error occurred reading in the tree
-                throw new Exception("Error reading \"" + xmlFileName + "\"", ex);
+                throw new("Error reading \"" + xmlFileName + "\"", ex);
             }
 
             //validate that the bullet nodes are all valid
@@ -99,7 +99,7 @@ namespace BulletMLLib.SharedProject
             catch (Exception ex)
             {
                 //an error occurred reading in the tree
-                throw new Exception("Error reading \"" + xmlFileName + "\"", ex);
+                throw new("Error reading \"" + xmlFileName + "\"", ex);
             }
         }
 
@@ -116,7 +116,7 @@ namespace BulletMLLib.SharedProject
             if ("bulletml" != strElementName)
             {
                 //The first node HAS to be bulletml
-                throw new Exception(
+                throw new(
                     "Error reading \""
                         + Filename
                         + "\": XML root node needs to be \"bulletml\", found \""
@@ -126,7 +126,7 @@ namespace BulletMLLib.SharedProject
             }
 
             //Create the root node of the bulletml tree
-            RootNode = new BulletMLNode(ENodeName.bulletml);
+            RootNode = new(ENodeName.bulletml);
 
             //Read in the whole bulletml tree
             RootNode.Parse(rootXmlNode, null);

@@ -50,8 +50,8 @@ namespace BulletMLLib.SharedProject.Tasks
         /// <param name="owner">Owner.</param>
         public BulletMLTask(BulletMLNode node, BulletMLTask owner)
         {
-            ChildTasks = new List<BulletMLTask>();
-            ParamList = new List<float>();
+            ChildTasks = new();
+            ParamList = new();
             TaskFinished = false;
             Owner = owner;
             Node = node ?? throw new NullReferenceException("node argument cannot be null");

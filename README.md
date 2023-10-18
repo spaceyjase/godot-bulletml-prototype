@@ -1,5 +1,6 @@
 # godot-bulletml-prototype
-Small prototype using bulletml in godot based on bullmllib source found here: https://github.com/dmanning23/BulletMLLib
+
+Small prototype using bulletml in godot based on bullmllib source found here: <https://github.com/dmanning23/BulletMLLib>
 
 The original repository relies on the Microsoft Xna Framework. Here, this has been replace with godot native types (e.g. Vector2).
 
@@ -10,9 +11,12 @@ The original repository relies on the Microsoft Xna Framework. Here, this has be
 ![Screen](/screenshots/screen4.png)
 ![Screen](/screenshots/screen5.png)
 
-
 Use 'SPACE' to cycle through the bullet patterns.
 
 Cursor keys to move the player.
 
 Supports godot 4 and 3.5 (see branch) mono versions.
+
+## Differences
+
+Godot's default forward direction is positive along the X axis. The original library has bullets facing up; that is so an initial direction of 90 degrees (clockwise) would move the bullet along the positive X axis. In godot, an initial direction of 90 degrees will move along a negative Y direction.

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fire>
+			<direction type="aim"></direction>
+			<bullet>
+ 			</bullet>
+		</fire>
+	</action>
+</bulletml>

@@ -22,13 +22,7 @@ namespace BulletMLLib.SharedProject
         private float _direction;
 
         /// <summary>
-        /// A bullet manager that manages this bullet.
-        /// </summary>
-        /// <value>My bullet manager.</value>
-        private readonly IBulletManager _bulletManager;
-
-        /// <summary>
-        /// The tree node that describes this bullet.  These are shared between multiple bullets
+        /// The tree node that describes this bullet. These are shared between multiple bullets
         /// </summary>
         public BulletMLNode MyNode { get; private set; }
 
@@ -46,13 +40,6 @@ namespace BulletMLLib.SharedProject
         /// <value>The scale.</value>
         public float Scale { get; set; }
 
-        private float _speed;
-
-        /// <summary>
-        /// Store the initial velocity of the bullet when it is fired.
-        /// </summary>
-        private Vector2 _initialVelocity = Vector2.Zero;
-
         //TODO: do a task factory, we are going to be creating a LOT of those little dudes
 
         #endregion //Members
@@ -69,16 +56,12 @@ namespace BulletMLLib.SharedProject
         /// Gets or sets the speed
         /// </summary>
         /// <value>The speed, in pixels/frame</value>
-        public virtual float Speed
-        {
-            get { return _speed; }
-            set { _speed = value; }
-        }
+        public virtual float Speed { get; set; }
 
         /// <summary>
         /// A list of tasks that will define this bullets behavior
         /// </summary>
-        public List<BulletMLTask> Tasks { get; private set; }
+        public List<BulletMLTask> Tasks { get; }
 
         /// <summary>
         /// Abstract property to get the X location of this bullet.
@@ -98,7 +81,7 @@ namespace BulletMLLib.SharedProject
         /// Gets my bullet manager.
         /// </summary>
         /// <value>My bullet manager.</value>
-        public IBulletManager MyBulletManager => _bulletManager;
+        public IBulletManager MyBulletManager { get; }
 
         /// <summary>
         /// Gets or sets the direction.
@@ -121,12 +104,7 @@ namespace BulletMLLib.SharedProject
         /// For example, if the enemy is moving forward and fires bullets, they will clump together because they don't retain the enemy's velocity.
         /// Set this property if you have fast moving enemies or guns and want the bullet pattern to inherit the velocity of the object that fired them.
         /// </summary>
-        public Vector2 InitialVelocity
-        {
-            get => _initialVelocity;
-            set => _initialVelocity = value;
-        }
-
+        public Vector2 InitialVelocity { get; } = Vector2.Zero;
         #endregion //Properties
 
         #region Methods
@@ -139,11 +117,11 @@ namespace BulletMLLib.SharedProject
         {
             //grab the bullet manager for this dude
             Debug.Assert(null != myBulletManager);
-            _bulletManager = myBulletManager;
+            MyBulletManager = myBulletManager;
 
             Acceleration = Vector2.Zero;
 
-            Tasks = new List<BulletMLTask>();
+            Tasks = new();
 
             //init these to the default
             TimeSpeed = 1.0f;
@@ -184,7 +162,7 @@ namespace BulletMLLib.SharedProject
                         else
                         {
                             //Create a new bullet
-                            var newDude = _bulletManager.CreateTopBullet();
+                            var newDude = MyBulletManager.CreateTopBullet();
 
                             //set the position to this dude's position
                             newDude.X = X;
@@ -200,7 +178,7 @@ namespace BulletMLLib.SharedProject
             if (!bValidBullet)
             {
                 //We didnt find a "top" node for this dude, remove him from the game.
-                _bulletManager.RemoveBullet(this);
+                MyBulletManager.RemoveBullet(this);
             }
         }
 

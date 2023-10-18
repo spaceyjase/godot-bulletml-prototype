@@ -8,7 +8,7 @@ namespace BulletMLLib.SharedProject.Nodes
 {
     /// <summary>
     /// This is a single node from a BulletML document.
-    /// Used as the base node for all teh other node types.
+    /// Used as the base node for all the other node types.
     /// </summary>
     public class BulletMLNode
     {
@@ -34,7 +34,7 @@ namespace BulletMLLib.SharedProject.Nodes
         /// An equation used to get a value of this node.
         /// </summary>
         /// <value>The node value.</value>
-        protected BulletMLEquation NodeEquation = new();
+        private readonly BulletMLEquation NodeEquation = new();
 
         /// <summary>
         /// A list of all the child nodes for this dude
@@ -51,7 +51,7 @@ namespace BulletMLLib.SharedProject.Nodes
         /// </summary>
         public BulletMLNode(ENodeName nodeType)
         {
-            ChildNodes = new List<BulletMLNode>();
+            ChildNodes = new();
             Name = nodeType;
             //NodeType = ENodeType.none;
         }
@@ -61,7 +61,7 @@ namespace BulletMLLib.SharedProject.Nodes
         /// </summary>
         /// <returns>ENodeType: the nuem value of that string</returns>
         /// <param name="str">The string to convert to an enum</param>
-        private static ENodeType StringToType(string str)
+        public static ENodeType StringToType(string str)
         {
             //make sure there is something there
             if (string.IsNullOrEmpty(str))
@@ -86,7 +86,7 @@ namespace BulletMLLib.SharedProject.Nodes
         /// Gets the root node.
         /// </summary>
         /// <returns>The root node.</returns>
-        protected BulletMLNode GetRootNode()
+        public BulletMLNode GetRootNode()
         {
             //recurse up until we get to the root node
             return null != Parent ? Parent.GetRootNode() : this;

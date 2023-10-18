@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fire>
+			<direction type="sequence">
+			10
+			</direction>
+			<bullet>
+				<direction>
+				20
+				</direction>
+			</bullet>
+		</fire>
+	</action>
+</bulletml>

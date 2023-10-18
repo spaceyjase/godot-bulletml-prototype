@@ -35,8 +35,8 @@ namespace BulletMLLib.SharedProject.Nodes
                 ENodeName.direction => new DirectionNode(),
                 ENodeName.speed => new SpeedNode(),
                 ENodeName.param => new ParamNode(),
-                ENodeName.bulletml => new BulletMLNode(ENodeName.bulletml),
-                _ => throw new Exception($"Unhandled type of ENodeName: {nodeType}")
+                ENodeName.bulletml => new(ENodeName.bulletml),
+                _ => throw new($"Unhandled type of ENodeName: {nodeType}")
             };
         }
     }

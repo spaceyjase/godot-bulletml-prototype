@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fire>
+			<bullet>
+				<action>
+					<vanish/>
+				</action>
+			</bullet>
+		</fire>
+		<vanish/>
+	</action>
+</bulletml>

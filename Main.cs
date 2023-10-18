@@ -26,7 +26,7 @@ namespace bulletmltemplate
         public Main()
         {
             Instance = this;
-            moveManager = new MoveManager(GetPlayerPosition);
+            moveManager = new(GetPlayerPosition);
         }
 
         private Vector2 GetPlayerPosition()
@@ -56,10 +56,7 @@ namespace bulletmltemplate
             if (!(scene.Instantiate() is Sprite2D player))
                 return;
             playerInstance = player;
-            player.Position = new Vector2(
-                GetViewportRect().Size.X / 2f,
-                GetViewportRect().Size.Y - 100f
-            );
+            player.Position = new(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
             AddChild(player);
         }
 
@@ -67,6 +64,9 @@ namespace bulletmltemplate
         {
             var delta = (float)bigDelta;
             base._Process(delta);
+
+            var label = GetNode<Label>("Control/VBoxContainer/PlayerPositionLabel");
+            label.Text = $"Player: ({playerInstance.Position.X}, {playerInstance.Position.Y})";
 
             if (Input.IsActionJustPressed("ui_select"))
             {
@@ -86,7 +86,7 @@ namespace bulletmltemplate
 
         private void AddBullet()
         {
-            var label = GetNode<Label>("Control/BulletPatternLabel");
+            var label = GetNode<Label>("Control/VBoxContainer/BulletPatternLabel");
             label.Text = $"Pattern: {myPatterns[currentPattern % myPatterns.Count].Filename}";
             label.Show();
 
@@ -104,7 +104,7 @@ namespace bulletmltemplate
 
             // add a new bullet in the center of the screen (ish)
             topLevelBullet = (Mover)moveManager.CreateTopBullet();
-            topLevelBullet.Position = new Vector2(
+            topLevelBullet.Position = new(
                 GetViewportRect().Size.X / 2f,
                 GetViewportRect().Size.Y / 2f - 100f
             );

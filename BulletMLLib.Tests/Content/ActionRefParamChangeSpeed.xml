@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fire>
+			<bullet label="test">
+				<actionRef label="test2">
+					<param>10</param>
+				</actionRef>
+			</bullet>
+		</fire>
+	</action>
+	
+	<action label="test1">
+	</action>
+	
+	<action label="test2">
+		<changeSpeed>
+			<speed type="absolute">$1</speed>
+			<term>2</term>
+		</changeSpeed>
+	</action>
+</bulletml>

@@ -5,373 +5,389 @@ using BulletMLLib.SharedProject.Nodes;
 
 namespace BulletMLLib.SharedProject.Tasks
 {
-	/// <summary>
-	/// This is a task..each task is the action from a single xml node, for one bullet.
-	/// basically each bullet makes a tree of these to match its pattern
-	/// </summary>
-	public class BulletMLTask
-	{
-		#region Members
+    /// <summary>
+    /// This is a task..each task is the action from a single xml node, for one bullet.
+    /// basically each bullet makes a tree of these to match its pattern
+    /// </summary>
+    public class BulletMLTask
+    {
+        #region Members
 
-		/// <summary>
-		/// A list of child tasks of this dude
-		/// </summary>
-		public List<BulletMLTask> ChildTasks { get; private set; }
+        /// <summary>
+        /// A list of child tasks of this dude
+        /// </summary>
+        public List<BulletMLTask> ChildTasks { get; private set; }
 
-		/// <summary>
-		/// The parameter list for this task
-		/// </summary>
-		public List<float> ParamList { get; private set; }
+        /// <summary>
+        /// The parameter list for this task
+        /// </summary>
+        public List<float> ParamList { get; private set; }
 
-		/// <summary>
-		/// the parent task of this dude in the tree
-		/// Used to fetch param values.
-		/// </summary>
-		public BulletMLTask Owner { get; set; }
+        /// <summary>
+        /// the parent task of this dude in the tree
+        /// Used to fetch param values.
+        /// </summary>
+        public BulletMLTask Owner { get; set; }
 
-		/// <summary>
-		/// The bullet ml node that this dude represents
-		/// </summary>
-		public BulletMLNode Node { get; private set; }
+        /// <summary>
+        /// The bullet ml node that this dude represents
+        /// </summary>
+        public BulletMLNode Node { get; private set; }
 
-		/// <summary>
-		/// whether or not this task has finished running
-		/// </summary>
-		public bool TaskFinished { get; protected set; }
+        /// <summary>
+        /// whether or not this task has finished running
+        /// </summary>
+        public bool TaskFinished { get; protected set; }
 
-		#endregion //Members
+        #endregion //Members
 
-		#region Methods
+        #region Methods
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BulletMLTask"/> class.
-		/// </summary>
-		/// <param name="node">Node.</param>
-		/// <param name="owner">Owner.</param>
-		public BulletMLTask(BulletMLNode node, BulletMLTask owner)
-		{
-			ChildTasks = new List<BulletMLTask>();
-			ParamList = new List<float>();
-			TaskFinished = false;
-			Owner = owner;
-			Node = node ?? throw new NullReferenceException("node argument cannot be null"); 
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BulletMLTask"/> class.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        /// <param name="owner">Owner.</param>
+        public BulletMLTask(BulletMLNode node, BulletMLTask owner)
+        {
+            ChildTasks = new();
+            ParamList = new();
+            TaskFinished = false;
+            Owner = owner;
+            Node = node ?? throw new NullReferenceException("node argument cannot be null");
+        }
 
-		/// <summary>
-		/// Parse a specified node and bullet into this task
-		/// </summary>
-		/// <param name="bullet">the bullet this dude is controlling</param>
-		public virtual void ParseTasks(Bullet bullet)
-		{
-			if (null == bullet)
-			{
-				throw new NullReferenceException("bullet argument cannot be null");
-			}
+        /// <summary>
+        /// Parse a specified node and bullet into this task
+        /// </summary>
+        /// <param name="bullet">the bullet this dude is controlling</param>
+        public virtual void ParseTasks(Bullet bullet)
+        {
+            if (null == bullet)
+            {
+                throw new NullReferenceException("bullet argument cannot be null");
+            }
 
-			foreach (var childNode in Node.ChildNodes)
-			{
-				ParseChildNode(childNode, bullet);
-			}
-		}
-		
-		/// <summary>
-		/// Parse a specified node and bullet into this task
-		/// </summary>
-		/// <param name="childNode">the node for this dude</param>
-		/// <param name="bullet">the bullet this dude is controlling</param>
-		protected virtual void ParseChildNode(BulletMLNode childNode, Bullet bullet)
-		{
-			Debug.Assert(null != childNode);
-			Debug.Assert(null != bullet);
+            foreach (var childNode in Node.ChildNodes)
+            {
+                ParseChildNode(childNode, bullet);
+            }
+        }
 
-			//construct the correct type of node
-			switch (childNode.Name)
-			{
-				case ENodeName.repeat:
-				{
-					//convert the node to an repeatnode
-					var myRepeatNode = childNode as RepeatNode;
+        /// <summary>
+        /// Parse a specified node and bullet into this task
+        /// </summary>
+        /// <param name="childNode">the node for this dude</param>
+        /// <param name="bullet">the bullet this dude is controlling</param>
+        protected virtual void ParseChildNode(BulletMLNode childNode, Bullet bullet)
+        {
+            Debug.Assert(null != childNode);
+            Debug.Assert(null != bullet);
 
-					//create a placeholder bulletmltask for the repeat node
-					var repeatTask = new RepeatTask(myRepeatNode, this);
+            //construct the correct type of node
+            switch (childNode.Name)
+            {
+                case ENodeName.repeat:
 
-					//parse the child nodes into the repeat task
-					repeatTask.ParseTasks(bullet);
+                    {
+                        //convert the node to an repeatnode
+                        var myRepeatNode = childNode as RepeatNode;
 
-					//store the task
-					ChildTasks.Add(repeatTask);
-				}
-				break;
-			
-				case ENodeName.action:
-				{
-					//convert the node to an ActionNode
-					var myActionNode = childNode as ActionNode;
+                        //create a placeholder bulletmltask for the repeat node
+                        var repeatTask = new RepeatTask(myRepeatNode, this);
 
-					//create the action task
-					var actionTask = new ActionTask(myActionNode, this);
+                        //parse the child nodes into the repeat task
+                        repeatTask.ParseTasks(bullet);
 
-					//parse the children of the action node into the task
-					actionTask.ParseTasks(bullet);
+                        //store the task
+                        ChildTasks.Add(repeatTask);
+                    }
+                    break;
 
-					//store the task
-					ChildTasks.Add(actionTask);
-				}
-				break;
-		
-				case ENodeName.actionRef:
-				{
-					//convert the node to an ActionNode
-					var myActionNode = childNode as ActionRefNode;
+                case ENodeName.action:
 
-					//create the action task
-					var actionTask = new ActionTask(myActionNode, this);
+                    {
+                        //convert the node to an ActionNode
+                        var myActionNode = childNode as ActionNode;
 
-					//add the params to the action task
-					for (var i = 0; i < childNode.ChildNodes.Count; i++)
-					{
-						actionTask.ParamList.Add(childNode.ChildNodes[i].GetValue(this, bullet));
-					}
+                        //create the action task
+                        var actionTask = new ActionTask(myActionNode, this);
 
-					//parse the children of the action node into the task
-					actionTask.ParseTasks(bullet);
+                        //parse the children of the action node into the task
+                        actionTask.ParseTasks(bullet);
 
-					//store the task
-					ChildTasks.Add(actionTask);
-				}
-				break;
-	
-				case ENodeName.changeSpeed:
-				{
-					ChildTasks.Add(new ChangeSpeedTask(childNode as ChangeSpeedNode, this));
-				}
-				break;
-	
-				case ENodeName.changeDirection:
-				{
-					ChildTasks.Add(new ChangeDirectionTask(childNode as ChangeDirectionNode, this));
-				}
-				break;
+                        //store the task
+                        ChildTasks.Add(actionTask);
+                    }
+                    break;
 
-				case ENodeName.fire:
-				{
-					//convert the node to a fire node
-					var myFireNode = childNode as FireNode;
+                case ENodeName.actionRef:
 
-					//create the fire task
-					var fireTask = new FireTask(myFireNode, this);
+                    {
+                        //convert the node to an ActionNode
+                        var myActionNode = childNode as ActionRefNode;
 
-					//parse the children of the fire node into the task
-					fireTask.ParseTasks(bullet);
+                        //create the action task
+                        var actionTask = new ActionTask(myActionNode, this);
 
-					//store the task
-					ChildTasks.Add(fireTask);
-				}
-				break;
+                        //add the params to the action task
+                        for (var i = 0; i < childNode.ChildNodes.Count; i++)
+                        {
+                            actionTask.ParamList.Add(
+                                childNode.ChildNodes[i].GetValue(this, bullet)
+                            );
+                        }
 
-				case ENodeName.fireRef:
-				{
-					//convert the node to a fireref node
+                        //parse the children of the action node into the task
+                        actionTask.ParseTasks(bullet);
 
-					//create the fire task
-					if (childNode is FireRefNode myFireNode)
-					{
-						var fireTask = new FireTask(myFireNode.ReferencedFireNode, this);
+                        //store the task
+                        ChildTasks.Add(actionTask);
+                    }
+                    break;
 
-						//add the params to the fire task
-						for (var i = 0; i < childNode.ChildNodes.Count; i++)
-						{
-							fireTask.ParamList.Add(childNode.ChildNodes[i].GetValue(this, bullet));
-						}
+                case ENodeName.changeSpeed:
 
-						//parse the children of the action node into the task
-						fireTask.ParseTasks(bullet);
+                    {
+                        ChildTasks.Add(new ChangeSpeedTask(childNode as ChangeSpeedNode, this));
+                    }
+                    break;
 
-						//store the task
-						ChildTasks.Add(fireTask);
-					}
-				}
-				break;
+                case ENodeName.changeDirection:
 
-				case ENodeName.wait:
-				{
-					ChildTasks.Add(new WaitTask(childNode as WaitNode, this));
-				}
-				break;
+                    {
+                        ChildTasks.Add(
+                            new ChangeDirectionTask(childNode as ChangeDirectionNode, this)
+                        );
+                    }
+                    break;
 
-				case ENodeName.vanish:
-				{
-					ChildTasks.Add(new VanishTask(childNode as VanishNode, this));
-				}
-				break;
+                case ENodeName.fire:
 
-				case ENodeName.accel:
-				{
-					ChildTasks.Add(new AccelTask(childNode as AccelNode, this));
-				}
-				break;
-			}
-		}
+                    {
+                        //convert the node to a fire node
+                        var myFireNode = childNode as FireNode;
 
-		/// <summary>
-		/// This gets called when nested repeat nodes get initialized.
-		/// </summary>
-		/// <param name="bullet">Bullet.</param>
-		protected virtual void HardReset(Bullet bullet)
-		{
-			TaskFinished = false;
+                        //create the fire task
+                        var fireTask = new FireTask(myFireNode, this);
 
-			foreach (var task in ChildTasks)
-			{
-				task.HardReset(bullet);
-			}
+                        //parse the children of the fire node into the task
+                        fireTask.ParseTasks(bullet);
 
-			SetupTask(bullet);
-		}
+                        //store the task
+                        ChildTasks.Add(fireTask);
+                    }
+                    break;
 
-		/// <summary>
-		/// Init this task and all its sub tasks.  
-		/// This method should be called AFTER the nodes are parsed, but BEFORE run is called.
-		/// </summary>
-		/// <param name="bullet">the bullet this dude is controlling</param>
-		public virtual void InitTask(Bullet bullet)
-		{
-			TaskFinished = false;
+                case ENodeName.fireRef:
 
-			foreach (var task in ChildTasks)
-			{
-				task.InitTask(bullet);
-			}
+                    {
+                        //convert the node to a fireref node
 
-			SetupTask(bullet);
-		}
+                        //create the fire task
+                        if (childNode is FireRefNode myFireNode)
+                        {
+                            var fireTask = new FireTask(myFireNode.ReferencedFireNode, this);
 
-		/// <summary>
-		/// this sets up the task to be run.
-		/// </summary>
-		/// <param name="bullet">Bullet.</param>
-		protected virtual void SetupTask(Bullet bullet)
-		{
-			//overload in child classes
-		}
+                            //add the params to the fire task
+                            for (var i = 0; i < childNode.ChildNodes.Count; i++)
+                            {
+                                fireTask.ParamList.Add(
+                                    childNode.ChildNodes[i].GetValue(this, bullet)
+                                );
+                            }
 
-		/// <summary>
-		/// Run this task and all subtasks against a bullet
-		/// This is called once a frame during runtime.
-		/// </summary>
-		/// <returns>ERunStatus: whether this task is done, paused, or still running</returns>
-		/// <param name="bullet">The bullet to update this task against.</param>
-		public virtual ERunStatus Run(Bullet bullet)
-		{
-			//run all the child tasks
-			TaskFinished = true;
-			for (var i = 0; i < ChildTasks.Count; i++)
-			{
-				//is the child task finished running?
-				if (!ChildTasks[i].TaskFinished)
-				{
-					//Run the child task...
-					var childStatus = ChildTasks[i].Run(bullet);
-					if (childStatus == ERunStatus.Stop)
-					{
-						//The child task is paused, so it is not finished
-						TaskFinished = false;
-						return childStatus;
-					}
+                            //parse the children of the action node into the task
+                            fireTask.ParseTasks(bullet);
 
-					if (childStatus == ERunStatus.Continue)
-					{
-						//child task needs to do some more work
-						TaskFinished = false;
-					}
-				}
-			}
+                            //store the task
+                            ChildTasks.Add(fireTask);
+                        }
+                    }
+                    break;
 
-			return TaskFinished ?  ERunStatus.End : ERunStatus.Continue;
-		}
+                case ENodeName.wait:
 
-		/// <summary>
-		/// Get the value of a parameter of this task.
-		/// </summary>
-		/// <returns>The parameter value.</returns>
-		/// <param name="iParamNumber">the index of the parameter to get</param>
-		public double GetParamValue(int iParamNumber)
-		{
-			//if that task doesn't have any params, go up until we find one that does
-			if (ParamList.Count < iParamNumber)
-			{
-				//the current task doesn't have enough params to solve this value
-				return Owner?.GetParamValue(iParamNumber) ?? 0.0f;
-			}
-			
-			//the value of that param is the one we want
-			return ParamList[iParamNumber - 1];
-		}
+                    {
+                        ChildTasks.Add(new WaitTask(childNode as WaitNode, this));
+                    }
+                    break;
 
-		/// <summary>
-		/// Gets the node value.
-		/// </summary>
-		/// <returns>The node value.</returns>
-		public float GetNodeValue(Bullet bullet)
-		{
-			return Node.GetValue(this, bullet);
-		}
+                case ENodeName.vanish:
 
-		/// <summary>
-		/// Finds the task by label.
-		/// This recurses into child tasks to find the taks with the correct label
-		/// Used only for unit testing!
-		/// </summary>
-		/// <returns>The task by label.</returns>
-		/// <param name="strLabel">String label.</param>
-		public BulletMLTask FindTaskByLabel(string strLabel)
-		{
-			//check if this is the correct task
-			if (strLabel == Node.Label)
-			{
-				return this;
-			}
+                    {
+                        ChildTasks.Add(new VanishTask(childNode as VanishNode, this));
+                    }
+                    break;
 
-			//check if any of teh child tasks have a task with that label
-			foreach (var childTask in ChildTasks)
-			{
-				var foundTask = childTask.FindTaskByLabel(strLabel);
-				if (null != foundTask)
-				{
-					return foundTask;
-				}
-			}
+                case ENodeName.accel:
 
-			return null;
-		}
+                    {
+                        ChildTasks.Add(new AccelTask(childNode as AccelNode, this));
+                    }
+                    break;
+            }
+        }
 
-		/// <summary>
-		/// given a label and name, find the task that matches
-		/// </summary>
-		/// <returns>The task by label and name.</returns>
-		/// <param name="strLabel">String label of the task</param>
-		/// <param name="eName">the name of the node the task should be attached to</param>
-		public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
-		{
-			//check if this is the correct task
-			if ((strLabel == Node.Label) && (eName == Node.Name))
-			{
-				return this;
-			}
+        /// <summary>
+        /// This gets called when nested repeat nodes get initialized.
+        /// </summary>
+        /// <param name="bullet">Bullet.</param>
+        protected virtual void HardReset(Bullet bullet)
+        {
+            TaskFinished = false;
 
-			//check if any of teh child tasks have a task with that label
-			foreach (var childTask in ChildTasks)
-			{
-				var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
-				if (null != foundTask)
-				{
-					return foundTask;
-				}
-			}
+            foreach (var task in ChildTasks)
+            {
+                task.HardReset(bullet);
+            }
 
-			return null;
-		}
+            SetupTask(bullet);
+        }
 
-		#endregion //Methods
-	}
+        /// <summary>
+        /// Init this task and all its sub tasks.
+        /// This method should be called AFTER the nodes are parsed, but BEFORE run is called.
+        /// </summary>
+        /// <param name="bullet">the bullet this dude is controlling</param>
+        public virtual void InitTask(Bullet bullet)
+        {
+            TaskFinished = false;
+
+            foreach (var task in ChildTasks)
+            {
+                task.InitTask(bullet);
+            }
+
+            SetupTask(bullet);
+        }
+
+        /// <summary>
+        /// this sets up the task to be run.
+        /// </summary>
+        /// <param name="bullet">Bullet.</param>
+        protected virtual void SetupTask(Bullet bullet)
+        {
+            //overload in child classes
+        }
+
+        /// <summary>
+        /// Run this task and all subtasks against a bullet
+        /// This is called once a frame during runtime.
+        /// </summary>
+        /// <returns>ERunStatus: whether this task is done, paused, or still running</returns>
+        /// <param name="bullet">The bullet to update this task against.</param>
+        public virtual ERunStatus Run(Bullet bullet)
+        {
+            //run all the child tasks
+            TaskFinished = true;
+            for (var i = 0; i < ChildTasks.Count; i++)
+            {
+                //is the child task finished running?
+                if (!ChildTasks[i].TaskFinished)
+                {
+                    //Run the child task...
+                    var childStatus = ChildTasks[i].Run(bullet);
+                    if (childStatus == ERunStatus.Stop)
+                    {
+                        //The child task is paused, so it is not finished
+                        TaskFinished = false;
+                        return childStatus;
+                    }
+
+                    if (childStatus == ERunStatus.Continue)
+                    {
+                        //child task needs to do some more work
+                        TaskFinished = false;
+                    }
+                }
+            }
+
+            return TaskFinished ? ERunStatus.End : ERunStatus.Continue;
+        }
+
+        /// <summary>
+        /// Get the value of a parameter of this task.
+        /// </summary>
+        /// <returns>The parameter value.</returns>
+        /// <param name="iParamNumber">the index of the parameter to get</param>
+        public double GetParamValue(int iParamNumber)
+        {
+            //if that task doesn't have any params, go up until we find one that does
+            if (ParamList.Count < iParamNumber)
+            {
+                //the current task doesn't have enough params to solve this value
+                return Owner?.GetParamValue(iParamNumber) ?? 0.0f;
+            }
+
+            //the value of that param is the one we want
+            return ParamList[iParamNumber - 1];
+        }
+
+        /// <summary>
+        /// Gets the node value.
+        /// </summary>
+        /// <returns>The node value.</returns>
+        public float GetNodeValue(Bullet bullet)
+        {
+            return Node.GetValue(this, bullet);
+        }
+
+        /// <summary>
+        /// Finds the task by label.
+        /// This recurses into child tasks to find the taks with the correct label
+        /// Used only for unit testing!
+        /// </summary>
+        /// <returns>The task by label.</returns>
+        /// <param name="strLabel">String label.</param>
+        public BulletMLTask FindTaskByLabel(string strLabel)
+        {
+            //check if this is the correct task
+            if (strLabel == Node.Label)
+            {
+                return this;
+            }
+
+            //check if any of teh child tasks have a task with that label
+            foreach (var childTask in ChildTasks)
+            {
+                var foundTask = childTask.FindTaskByLabel(strLabel);
+                if (null != foundTask)
+                {
+                    return foundTask;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// given a label and name, find the task that matches
+        /// </summary>
+        /// <returns>The task by label and name.</returns>
+        /// <param name="strLabel">String label of the task</param>
+        /// <param name="eName">the name of the node the task should be attached to</param>
+        public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
+        {
+            //check if this is the correct task
+            if ((strLabel == Node.Label) && (eName == Node.Name))
+            {
+                return this;
+            }
+
+            //check if any of teh child tasks have a task with that label
+            foreach (var childTask in ChildTasks)
+            {
+                var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
+                if (null != foundTask)
+                {
+                    return foundTask;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion //Methods
+    }
 }

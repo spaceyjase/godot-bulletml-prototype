@@ -8,353 +8,321 @@ using Godot;
 
 namespace BulletMLLib.SharedProject
 {
-	/// <summary>
-	/// This is the bullet class that outside assemblies will interact with.
-	/// Just inherit from this class and override the abstract functions!
-	/// </summary>
-	public abstract class Bullet : IBullet
-	{
-		#region Members
+    /// <summary>
+    /// This is the bullet class that outside assemblies will interact with.
+    /// Just inherit from this class and override the abstract functions!
+    /// </summary>
+    public abstract class Bullet : IBullet
+    {
+        #region Members
 
-		/// <summary>
-		/// The direction this bullet is travelling.  Measured as an angle in radians
-		/// </summary>
-		private float _direction;
+        /// <summary>
+        /// The direction this bullet is travelling.  Measured as an angle in radians
+        /// </summary>
+        private float _direction;
 
-		/// <summary>
-		/// A bullet manager that manages this bullet.
-		/// </summary>
-		/// <value>My bullet manager.</value>
-		private readonly IBulletManager _bulletManager;
+        /// <summary>
+        /// The tree node that describes this bullet. These are shared between multiple bullets
+        /// </summary>
+        public BulletMLNode MyNode { get; private set; }
 
-		/// <summary>
-		/// The tree node that describes this bullet.  These are shared between multiple bullets
-		/// </summary>
-		public BulletMLNode MyNode { get; private set; }
+        /// <summary>
+        /// How fast time moves in this game.
+        /// Can be used to do slowdown, speedup, etc.
+        /// </summary>
+        /// <value>The time speed.</value>
+        public float TimeSpeed { get; set; }
 
-		/// <summary>
-		/// How fast time moves in this game.
-		/// Can be used to do slowdown, speedup, etc.
-		/// </summary>
-		/// <value>The time speed.</value>
-		public float TimeSpeed { get; set; }
+        /// <summary>
+        /// Change the size of this bulletml script
+        /// If you want to reuse a script for a game but the size is wrong, this can be used to resize it
+        /// </summary>
+        /// <value>The scale.</value>
+        public float Scale { get; set; }
 
-		/// <summary>
-		/// Change the size of this bulletml script
-		/// If you want to reuse a script for a game but the size is wrong, this can be used to resize it
-		/// </summary>
-		/// <value>The scale.</value>
-		public float Scale { get; set; }
+        //TODO: do a task factory, we are going to be creating a LOT of those little dudes
 
-		private float _speed;
+        #endregion //Members
 
-		/// <summary>
-		/// Store the initial velocity of the bullet when it is fired.
-		/// </summary>
-		private Vector2 _initialVelocity = Vector2.Zero;
+        #region Properties
 
-		//TODO: do a task factory, we are going to be creating a LOT of those little dudes
+        /// <summary>
+        /// The acceleration of this bullet
+        /// </summary>
+        /// <value>The accel, in pixels/frame^2</value>
+        public Vector2 Acceleration { get; set; }
 
-		#endregion //Members
+        /// <summary>
+        /// Gets or sets the speed
+        /// </summary>
+        /// <value>The speed, in pixels/frame</value>
+        public virtual float Speed { get; set; }
 
-		#region Properties
+        /// <summary>
+        /// A list of tasks that will define this bullets behavior
+        /// </summary>
+        public List<BulletMLTask> Tasks { get; }
 
-		/// <summary>
-		/// The acceleration of this bullet
-		/// </summary>
-		/// <value>The accel, in pixels/frame^2</value>
-		public Vector2 Acceleration { get; set; }
+        /// <summary>
+        /// Abstract property to get the X location of this bullet.
+        /// measured in pixels from upper left
+        /// </summary>
+        /// <value>The horizontal position.</value>
+        public abstract float X { get; set; }
 
-		/// <summary>
-		/// Gets or sets the speed
-		/// </summary>
-		/// <value>The speed, in pixels/frame</value>
-		public virtual float Speed 
-		{
-			get
-			{
-				return _speed;
-			}
-			set
-			{
-				_speed = value;
-			}
-		}
+        /// <summary>
+        /// Gets or sets the y parameter of the location
+        /// measured in pixels from upper left
+        /// </summary>
+        /// <value>The vertical position.</value>
+        public abstract float Y { get; set; }
 
-		/// <summary>
-		/// A list of tasks that will define this bullets behavior
-		/// </summary>
-		public List<BulletMLTask> Tasks { get; private set; }
+        /// <summary>
+        /// Gets my bullet manager.
+        /// </summary>
+        /// <value>My bullet manager.</value>
+        public IBulletManager MyBulletManager { get; }
 
-		/// <summary>
-		/// Abstract property to get the X location of this bullet.
-		/// measured in pixels from upper left
-		/// </summary>
-		/// <value>The horizontal position.</value>
-		public abstract float X
-		{
-			get;
-			set;
-		}
+        /// <summary>
+        /// Gets or sets the direction.
+        /// </summary>
+        /// <value>The direction in radians.</value>
+        public virtual float Direction
+        {
+            get => _direction;
+            set => _direction = MathHelper.WrapAngle(value);
+        }
 
-		/// <summary>
-		/// Gets or sets the y parameter of the location
-		/// measured in pixels from upper left
-		/// </summary>
-		/// <value>The vertical position.</value>
-		public abstract float Y
-		{
-			get;
-			set;
-		}
+        /// <summary>
+        /// Convenience property to get the label of a bullet.
+        /// </summary>
+        /// <value>The label.</value>
+        public string Label => MyNode.Label;
 
-		/// <summary>
-		/// Gets my bullet manager.
-		/// </summary>
-		/// <value>My bullet manager.</value>
-		public IBulletManager MyBulletManager => _bulletManager;
+        /// <summary>
+        /// This is the initial velocity of the bullet when it is fired.
+        /// For example, if the enemy is moving forward and fires bullets, they will clump together because they don't retain the enemy's velocity.
+        /// Set this property if you have fast moving enemies or guns and want the bullet pattern to inherit the velocity of the object that fired them.
+        /// </summary>
+        public Vector2 InitialVelocity { get; } = Vector2.Zero;
+        #endregion //Properties
 
-		/// <summary>
-		/// Gets or sets the direction.
-		/// </summary>
-		/// <value>The direction in radians.</value>
-		public virtual float Direction
-		{
-			get => _direction;
-			set => _direction = MathHelper.WrapAngle(value);
-		}
+        #region Methods
 
-		/// <summary>
-		/// Convenience property to get the label of a bullet.
-		/// </summary>
-		/// <value>The label.</value>
-		public string Label => MyNode.Label;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Bullet"/> class.
+        /// </summary>
+        /// <param name="myBulletManager">My bullet manager.</param>
+        protected Bullet(IBulletManager myBulletManager)
+        {
+            //grab the bullet manager for this dude
+            Debug.Assert(null != myBulletManager);
+            MyBulletManager = myBulletManager;
 
-		/// <summary>
-		/// This is the initial velocity of the bullet when it is fired.
-		/// For example, if the enemy is moving forward and fires bullets, they will clump together because they don't retain the enemy's velocity.
-		/// Set this property if you have fast moving enemies or guns and want the bullet pattern to inherit the velocity of the object that fired them.
-		/// </summary>
-		public Vector2 InitialVelocity
-		{
-			get => _initialVelocity;
-			set => _initialVelocity = value;
-		}
+            Acceleration = Vector2.Zero;
 
-		#endregion //Properties
+            Tasks = new();
 
-		#region Methods
+            //init these to the default
+            TimeSpeed = 1.0f;
+            Scale = 1.0f;
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Bullet"/> class.
-		/// </summary>
-		/// <param name="myBulletManager">My bullet manager.</param>
-		protected Bullet(IBulletManager myBulletManager)
-		{
-			//grab the bullet manager for this dude
-			Debug.Assert(null != myBulletManager);
-			_bulletManager = myBulletManager;
+        /// <summary>
+        /// Initialize this bullet with a top level node
+        /// </summary>
+        /// <param name="rootNode">This is a top level node... find the first "top" node and use it to define this bullet</param>
+        public void InitTopNode(BulletMLNode rootNode)
+        {
+            Debug.Assert(null != rootNode);
 
-			Acceleration = Vector2.Zero;
+            //okay find the item labelled 'top'
+            var bValidBullet = false;
+            var topNode = rootNode.FindLabelNode("top", ENodeName.action);
+            if (topNode != null)
+            {
+                //initialize with the top node we found!
+                InitNode(topNode);
+                bValidBullet = true;
+            }
+            else
+            {
+                //ok there is no 'top' node, so that means we have a list of 'top#' nodes
+                for (var i = 1; i < 10; i++)
+                {
+                    topNode = rootNode.FindLabelNode("top" + i, ENodeName.action);
+                    if (topNode != null)
+                    {
+                        if (!bValidBullet)
+                        {
+                            //Use this bullet!
+                            InitNode(topNode);
+                            bValidBullet = true;
+                        }
+                        else
+                        {
+                            //Create a new bullet
+                            var newDude = MyBulletManager.CreateTopBullet();
 
-			Tasks = new List<BulletMLTask>();
+                            //set the position to this dude's position
+                            newDude.X = X;
+                            newDude.Y = Y;
 
-			//init these to the default
-			TimeSpeed = 1.0f;
-			Scale = 1.0f;
-		}
+                            //initialize with the node we found
+                            newDude.InitNode(topNode);
+                        }
+                    }
+                }
+            }
 
-		/// <summary>
-		/// Initialize this bullet with a top level node
-		/// </summary>
-		/// <param name="rootNode">This is a top level node... find the first "top" node and use it to define this bullet</param>
-		public void InitTopNode(BulletMLNode rootNode)
-		{
-			Debug.Assert(null != rootNode);
+            if (!bValidBullet)
+            {
+                //We didnt find a "top" node for this dude, remove him from the game.
+                MyBulletManager.RemoveBullet(this);
+            }
+        }
 
-			//okay find the item labelled 'top'
-			var bValidBullet = false;
-			var topNode = rootNode.FindLabelNode("top", ENodeName.action);
-			if (topNode != null)
-			{
-				//initialize with the top node we found!
-				InitNode(topNode);
-				bValidBullet = true;
-			}
-			else
-			{
-				//ok there is no 'top' node, so that means we have a list of 'top#' nodes
-				for (var i = 1; i < 10; i++)
-				{
-					topNode = rootNode.FindLabelNode("top" + i, ENodeName.action);
-					if (topNode != null)
-					{
-						if (!bValidBullet)
-						{
-							//Use this bullet!
-							InitNode(topNode);
-							bValidBullet = true;
-						}
-						else
-						{
-							//Create a new bullet
-							var newDude = _bulletManager.CreateTopBullet();
+        /// <summary>
+        /// This bullet is fired from another bullet, initialize it from the node that fired it
+        /// </summary>
+        /// <param name="subNode">Sub node that defines this bullet</param>
+        public void InitNode(BulletMLNode subNode)
+        {
+            Debug.Assert(null != subNode);
 
-							//set the position to this dude's position
-							newDude.X = X;
-							newDude.Y = Y;
+            //clear everything out
+            Tasks.Clear();
 
-							//initialize with the node we found
-							newDude.InitNode(topNode);
-						}
-					}
-				}
-			}
+            //Grab that top level node
+            MyNode = subNode;
 
-			if (!bValidBullet)
-			{
-				//We didnt find a "top" node for this dude, remove him from the game.
-				_bulletManager.RemoveBullet(this);
-			}
-		}
-		
-		/// <summary>
-		/// This bullet is fired from another bullet, initialize it from the node that fired it
-		/// </summary>
-		/// <param name="subNode">Sub node that defines this bullet</param>
-		public void InitNode(BulletMLNode subNode)
-		{
-			Debug.Assert(null != subNode);
+            //found a top num node, add a task for it
+            var task = new BulletMLTask(subNode, null);
 
-			//clear everything out
-			Tasks.Clear();
-			
-			//Grab that top level node
-			MyNode = subNode;
+            //parse the nodes into the task list
+            task.ParseTasks(this);
 
-			//found a top num node, add a task for it
-			var task = new BulletMLTask(subNode, null);
+            //initialize all the tasks
+            task.InitTask(this);
 
-			//parse the nodes into the task list
-			task.ParseTasks(this);
+            Tasks.Add(task);
 
-			//initialize all the tasks
-			task.InitTask(this);
+            //Check if we should change the start heading and speed to adjust for an initial velocity
+            if (Vector2.Zero == InitialVelocity)
+                return;
 
-			Tasks.Add(task);
+            //now that the heading and speed have been set, adjust them according to the initial velocity.
+            var final = (Direction.ToVector2() * Speed * Scale) + InitialVelocity;
+            Direction = final.Angle();
+            Speed = final.Length() / Scale;
+        }
 
-			//Check if we should change the start heading and speed to adjust for an initial velocity
-			if (Vector2.Zero == InitialVelocity) return;
-			
-			//now that the heading and speed have been set, adjust them according to the initial velocity.
-			var final = (Direction.ToVector2() * Speed * Scale) + InitialVelocity;
-			Direction = final.Angle();
-			Speed = final.Length() / Scale;
-		}
+        /// <summary>
+        /// Asynchronous update method
+        /// </summary>
+        /// <returns></returns>
+        public Task UpdateAsync()
+        {
+            //run the update method on a different thread
+            return Task.Factory.StartNew(() =>
+            {
+                Update();
+            });
+        }
 
-		/// <summary>
-		/// Asynchronous update method
-		/// </summary>
-		/// <returns></returns>
-		public Task UpdateAsync()
-		{
-			//run the update method on a different thread
-			return Task.Factory.StartNew(() => { Update(); });
-		}
+        /// <summary>
+        /// Update this bullet.  Called once every 1/60th of a second during runtime
+        /// </summary>
+        public virtual void Update()
+        {
+            //Flag to tell whether or not this bullet has finished all its tasks
+            foreach (var t in Tasks)
+            {
+                t.Run(this);
+            }
 
-		/// <summary>
-		/// Update this bullet.  Called once every 1/60th of a second during runtime
-		/// </summary>
-		public virtual void Update()
-		{
-			//Flag to tell whether or not this bullet has finished all its tasks
-			foreach (var t in Tasks)
-      {
-        t.Run(this);
-      }
+            //only do this stuff if the bullet isn't done, cuz sin/cosin are expensive
+            var vel = (Acceleration + (Direction.ToVector2() * (Speed * TimeSpeed))) * Scale;
+            X += vel.X;
+            Y += vel.Y;
+        }
 
-			//only do this stuff if the bullet isn't done, cuz sin/cosin are expensive
-			var vel = (Acceleration + (Direction.ToVector2() * (Speed * TimeSpeed))) * Scale;
-			X += vel.X;
-			Y += vel.Y;
-		}
+        /// <summary>
+        /// This method gets called after the update method
+        /// </summary>
+        public abstract void PostUpdate();
 
-		/// <summary>
-		/// This method gets called after the update method
-		/// </summary>
-		public abstract void PostUpdate();
+        /// <summary>
+        /// Get the direction to aim that bullet
+        /// </summary>
+        /// <returns>angle to target the bullet</returns>
+        public virtual float GetAimDir()
+        {
+            //get the player position so we can aim at that little fucker
+            Debug.Assert(null != MyBulletManager);
+            var shipPos = MyBulletManager.PlayerPosition(this);
 
-		/// <summary>
-		/// Get the direction to aim that bullet
-		/// </summary>
-		/// <returns>angle to target the bullet</returns>
-		public virtual float GetAimDir()
-		{
-			//get the player position so we can aim at that little fucker
-			Debug.Assert(null != MyBulletManager);
-			var shipPos = MyBulletManager.PlayerPosition(this);
+            //get our position
+            var pos = new Vector2(X, Y);
 
-			//get our position
-			var pos = new Vector2(X, Y);
+            //get the angle at that dude
+            return (shipPos - pos).Angle();
+        }
 
-			//get the angle at that dude
-			return (shipPos - pos).Angle();
-		}
+        /// <summary>
+        /// Finds the task by label.
+        /// This recurses into child tasks to find the task with the correct label
+        /// Used only for unit testing!
+        /// </summary>
+        /// <returns>The task by label.</returns>
+        /// <param name="strLabel">String label.</param>
+        public BulletMLTask FindTaskByLabel(string strLabel)
+        {
+            //check if any of teh child tasks have a task with that label
+            foreach (var childTask in Tasks)
+            {
+                var foundTask = childTask.FindTaskByLabel(strLabel);
+                if (null != foundTask)
+                {
+                    return foundTask;
+                }
+            }
 
-		/// <summary>
-		/// Finds the task by label.
-		/// This recurses into child tasks to find the task with the correct label
-		/// Used only for unit testing!
-		/// </summary>
-		/// <returns>The task by label.</returns>
-		/// <param name="strLabel">String label.</param>
-		public BulletMLTask FindTaskByLabel(string strLabel)
-		{
-			//check if any of teh child tasks have a task with that label
-			foreach (var childTask in Tasks)
-			{
-				var foundTask = childTask.FindTaskByLabel(strLabel);
-				if (null != foundTask)
-				{
-					return foundTask;
-				}
-			}
+            return null;
+        }
 
-			return null;
-		}
+        /// <summary>
+        /// given a label and name, find the task that matches
+        /// </summary>
+        /// <returns>The task by label and name.</returns>
+        /// <param name="strLabel">String label of the task</param>
+        /// <param name="eName">the name of the node the task should be attached to</param>
+        public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
+        {
+            //check if any of teh child tasks have a task with that label
+            foreach (var childTask in Tasks)
+            {
+                var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
+                if (null != foundTask)
+                {
+                    return foundTask;
+                }
+            }
 
-		/// <summary>
-		/// given a label and name, find the task that matches
-		/// </summary>
-		/// <returns>The task by label and name.</returns>
-		/// <param name="strLabel">String label of the task</param>
-		/// <param name="eName">the name of the node the task should be attached to</param>
-		public BulletMLTask FindTaskByLabelAndName(string strLabel, ENodeName eName)
-		{
-			//check if any of teh child tasks have a task with that label
-			foreach (var childTask in Tasks)
-			{
-				var foundTask = childTask.FindTaskByLabelAndName(strLabel, eName);
-				if (null != foundTask)
-				{
-					return foundTask;
-				}
-			}
+            return null;
+        }
 
-			return null;
-		}
+        /// <summary>
+        /// Check if this bullet has finished running all its tasks.
+        /// </summary>
+        /// <returns></returns>
+        public bool TasksFinished()
+        {
+            return Tasks.All(t => t.TaskFinished);
 
-		/// <summary>
-		/// Check if this bullet has finished running all its tasks.
-		/// </summary>
-		/// <returns></returns>
-		public bool TasksFinished()
-		{
-			return Tasks.All(t => t.TaskFinished);
+            //all the tasks and their child tasks are done running
+        }
 
-			//all the tasks and their child tasks are done running
-		}
-
-		#endregion //Methods
-	}
+        #endregion //Methods
+    }
 }

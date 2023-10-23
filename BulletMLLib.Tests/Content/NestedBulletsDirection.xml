@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bulletml SYSTEM "bulletml.dtd">
+<bulletml>
+	<action label="top">
+		<fire>
+			<direction type="absolute">
+			10
+			</direction>
+			<bullet>
+				<action>
+				<fire>
+					<direction type="relative">
+					10
+					</direction>
+					<bullet label="test">
+					</bullet>
+				</fire>
+			</action>
+			</bullet>
+		</fire>
+	</action>
+</bulletml>

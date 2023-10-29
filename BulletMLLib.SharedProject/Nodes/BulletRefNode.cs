@@ -1,69 +1,68 @@
 using System;
 
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class BulletRefNode : BulletNode
 {
-    public class BulletRefNode : BulletNode
+    #region Members
+
+    /// <summary>
+    /// Gets the referenced bullet node.
+    /// </summary>
+    /// <value>The referenced bullet node.</value>
+    public BulletNode ReferencedBulletNode { get; private set; }
+
+    #endregion //Members
+
+    #region Methods
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BulletRefNode"/> class.
+    /// </summary>
+    public BulletRefNode()
+        : base(ENodeName.bulletRef) { }
+
+    /// <summary>
+    /// Validates the node.
+    /// Overloaded in child classes to validate that each type of node follows the correct business logic.
+    /// This checks stuff that isn't validated by the XML validation
+    /// </summary>
+    public override void ValidateNode()
     {
-        #region Members
+        //do any base class validation
+        base.ValidateNode();
 
-        /// <summary>
-        /// Gets the referenced bullet node.
-        /// </summary>
-        /// <value>The referenced bullet node.</value>
-        public BulletNode ReferencedBulletNode { get; private set; }
+        //make sure this dude knows where his bullet node is
+        FindMyBulletNode();
+    }
 
-        #endregion //Members
-
-        #region Methods
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BulletRefNode"/> class.
-        /// </summary>
-        public BulletRefNode()
-            : base(ENodeName.bulletRef) { }
-
-        /// <summary>
-        /// Validates the node.
-        /// Overloaded in child classes to validate that each type of node follows the correct business logic.
-        /// This checks stuff that isn't validated by the XML validation
-        /// </summary>
-        public override void ValidateNode()
+    /// <summary>
+    /// Finds the referenced bullet node.
+    /// </summary>
+    public void FindMyBulletNode()
+    {
+        if (null == ReferencedBulletNode)
         {
-            //do any base class validation
-            base.ValidateNode();
+            //Find the action node this dude references
+            var refNode = GetRootNode().FindLabelNode(Label, ENodeName.bullet);
 
-            //make sure this dude knows where his bullet node is
-            FindMyBulletNode();
-        }
+            //make sure we found something
+            if (null == refNode)
+            {
+                throw new NullReferenceException(
+                    "Couldn't find the bullet node \"" + Label + "\""
+                );
+            }
 
-        /// <summary>
-        /// Finds the referenced bullet node.
-        /// </summary>
-        public void FindMyBulletNode()
-        {
+            ReferencedBulletNode = refNode as BulletNode;
             if (null == ReferencedBulletNode)
             {
-                //Find the action node this dude references
-                var refNode = GetRootNode().FindLabelNode(Label, ENodeName.bullet);
-
-                //make sure we foud something
-                if (null == refNode)
-                {
-                    throw new NullReferenceException(
-                        "Couldn't find the bullet node \"" + Label + "\""
-                    );
-                }
-
-                ReferencedBulletNode = refNode as BulletNode;
-                if (null == ReferencedBulletNode)
-                {
-                    throw new NullReferenceException(
-                        "The BulletMLNode \"" + Label + "\" isn't a bullet node"
-                    );
-                }
+                throw new NullReferenceException(
+                    "The BulletMLNode \"" + Label + "\" isn't a bullet node"
+                );
             }
         }
-
-        #endregion //Methods
     }
+
+    #endregion //Methods
 }

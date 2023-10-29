@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class ParamNode : BulletMLNode
 {
-    public class ParamNode : BulletMLNode
-    {
-        public ParamNode()
-            : base(ENodeName.param) { }
-    }
+    public ParamNode()
+        : base(ENodeName.param) { }
 }

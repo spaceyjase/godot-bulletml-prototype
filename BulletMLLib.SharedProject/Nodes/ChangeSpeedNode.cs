@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class ChangeSpeedNode : BulletMLNode
 {
-    public class ChangeSpeedNode : BulletMLNode
-    {
-        public ChangeSpeedNode()
-            : base(ENodeName.changeSpeed) { }
-    }
+    public ChangeSpeedNode()
+        : base(ENodeName.changeSpeed) { }
 }

@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class RepeatNode : BulletMLNode
 {
-    public class RepeatNode : BulletMLNode
-    {
-        public RepeatNode()
-            : base(ENodeName.repeat) { }
-    }
+    public RepeatNode()
+        : base(ENodeName.repeat) { }
 }

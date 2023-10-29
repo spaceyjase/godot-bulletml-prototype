@@ -1,11 +1,10 @@
-namespace BulletMLLib.SharedProject
+namespace BulletMLLib.SharedProject;
+
+public enum ENodeType
 {
-    public enum ENodeType
-    {
-        none,
-        aim,
-        absolute,
-        relative,
-        sequence
-    }
+    none,
+    aim,
+    absolute,
+    relative,
+    sequence
 }

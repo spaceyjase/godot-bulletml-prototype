@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class WaitNode : BulletMLNode
 {
-    public class WaitNode : BulletMLNode
-    {
-        public WaitNode()
-            : base(ENodeName.wait) { }
-    }
+    public WaitNode()
+        : base(ENodeName.wait) { }
 }

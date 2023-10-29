@@ -1,11 +1,10 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class SpeedNode : BulletMLNode
 {
-    public class SpeedNode : BulletMLNode
+    public SpeedNode()
+        : base(ENodeName.speed)
     {
-        public SpeedNode()
-            : base(ENodeName.speed)
-        {
-            NodeType = ENodeType.absolute;
-        }
+        NodeType = ENodeType.absolute;
     }
 }

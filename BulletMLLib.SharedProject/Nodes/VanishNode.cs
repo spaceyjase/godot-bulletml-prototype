@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class VanishNode : BulletMLNode
 {
-    public class VanishNode : BulletMLNode
-    {
-        public VanishNode()
-            : base(ENodeName.vanish) { }
-    }
+    public VanishNode()
+        : base(ENodeName.vanish) { }
 }

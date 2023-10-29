@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class TimesNode : BulletMLNode
 {
-    public class TimesNode : BulletMLNode
-    {
-        public TimesNode()
-            : base(ENodeName.times) { }
-    }
+    public TimesNode()
+        : base(ENodeName.times) { }
 }

@@ -1,8 +1,7 @@
-namespace BulletMLLib.SharedProject.Nodes
+namespace BulletMLLib.SharedProject.Nodes;
+
+public class AccelNode : BulletMLNode
 {
-    public class AccelNode : BulletMLNode
-    {
-        public AccelNode()
-            : base(ENodeName.accel) { }
-    }
+    public AccelNode()
+        : base(ENodeName.accel) { }
 }

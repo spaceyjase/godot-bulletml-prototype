@@ -19,4 +19,4 @@ Supports godot 4 and 3.5 (see branch) mono versions.
 
 ## Differences
 
-Godot's default forward direction is positive along the X axis. The original library has bullets facing up; that is so an initial direction of 90 degrees (clockwise) would move the bullet along the positive X axis. In godot, an initial direction of 90 degrees will move along a negative Y direction.
+Godot's default forward direction is positive along the X axis in 2D. The original library has bullets facing up i.e. zero (North) degrees, so an initial direction of 90 degrees (clockwise) would move the bullet along the positive X axis. In godot, an initial direction of 90 degrees will move along a negative Y direction. Something to be wary of when writing patterns that have absolute directions.

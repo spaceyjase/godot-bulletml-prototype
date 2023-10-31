@@ -1,12 +1,11 @@
-namespace BulletMLLib.SharedProject
+namespace BulletMLLib.SharedProject;
+
+/// <summary>
+/// Different types of bullet patterns
+/// </summary>
+public enum EPatternType
 {
-    /// <summary>
-    /// Different types of bullet patterns
-    /// </summary>
-    public enum EPatternType
-    {
-        vertical,
-        horizontal,
-        none
-    }
+    vertical,
+    horizontal,
+    none
 }

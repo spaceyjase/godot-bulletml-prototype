@@ -3,112 +3,111 @@ using System.IO;
 using BulletMLLib.SharedProject;
 using Godot;
 
-namespace bulletmltemplate
+namespace bulletmltemplate;
+
+public partial class Main : Node2D
 {
-    public partial class Main : Node2D
+    [Export]
+    private PackedScene playerScene;
+
+    // TODO: GameManager/Globals
+    public static float ViewportWidth => Instance.GetViewportRect().Size.X;
+    public static float ViewportHeight => Instance.GetViewportRect().Size.Y;
+    public static Main Instance { get; private set; }
+
+    private readonly List<BulletPattern> myPatterns = new();
+
+    private readonly MoveManager moveManager;
+
+    private int currentPattern;
+    private Mover topLevelBullet;
+    private Sprite2D playerInstance; // TODO: PlayerManager
+
+    public Main()
     {
-        [Export]
-        private PackedScene playerScene;
+        Instance = this;
+        moveManager = new(GetPlayerPosition);
+    }
 
-        // TODO: GameManager/Globals
-        public static float ViewportWidth => Instance.GetViewportRect().Size.X;
-        public static float ViewportHeight => Instance.GetViewportRect().Size.Y;
-        public static Main Instance { get; private set; }
+    private Vector2 GetPlayerPosition()
+    {
+        return playerInstance?.Position
+               ?? new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
+    }
 
-        private readonly List<BulletPattern> myPatterns = new();
+    public override void _Ready()
+    {
+        base._Ready();
 
-        private readonly MoveManager moveManager;
+        GameManager.GameDifficulty = () => 1.0f;
 
-        private int currentPattern;
-        private Mover topLevelBullet;
-        private Sprite2D playerInstance; // TODO: PlayerManager
-
-        public Main()
+        foreach (var source in Directory.GetFiles("./samples", "*.xml"))
         {
-            Instance = this;
-            moveManager = new(GetPlayerPosition);
+            // load the pattern
+            var pattern = new BulletPattern();
+            pattern.ParseXML(source);
+            myPatterns.Add(pattern);
         }
 
-        private Vector2 GetPlayerPosition()
+        AddBullet();
+
+        // Add a dummy player sprite
+        var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
+        if (!(scene.Instantiate() is Sprite2D player))
+            return;
+        playerInstance = player;
+        player.Position = new(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
+        AddChild(player);
+    }
+
+    public override void _Process(double bigDelta)
+    {
+        var delta = (float)bigDelta;
+        base._Process(delta);
+
+        var label = GetNode<Label>("Control/VBoxContainer/PlayerPositionLabel");
+        label.Text = $"Player: ({playerInstance.Position.X}, {playerInstance.Position.Y})";
+
+        if (Input.IsActionJustPressed("ui_select"))
         {
-            return playerInstance?.Position
-                ?? new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
-        }
-
-        public override void _Ready()
-        {
-            base._Ready();
-
-            GameManager.GameDifficulty = () => 1.0f;
-
-            foreach (var source in Directory.GetFiles("./samples", "*.xml"))
-            {
-                // load the pattern
-                var pattern = new BulletPattern();
-                pattern.ParseXML(source);
-                myPatterns.Add(pattern);
-            }
+            currentPattern++;
 
             AddBullet();
 
-            // Add a dummy player sprite
-            var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
-            if (!(scene.Instantiate() is Sprite2D player))
-                return;
-            playerInstance = player;
-            player.Position = new(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
-            AddChild(player);
+            return;
         }
 
-        public override void _Process(double bigDelta)
+        moveManager.Update(delta);
+
+        // TODO: physics?
+
+        moveManager.PostUpdate();
+    }
+
+    private void AddBullet()
+    {
+        var label = GetNode<Label>("Control/VBoxContainer/BulletPatternLabel");
+        label.Text = $"Pattern: {myPatterns[currentPattern % myPatterns.Count].Filename}";
+        label.Show();
+
+        // clear out all the bullets
+        foreach (var child in GetChildren())
         {
-            var delta = (float)bigDelta;
-            base._Process(delta);
+            if (child is Sprite2D)
+                continue; // HACK: the player
 
-            var label = GetNode<Label>("Control/VBoxContainer/PlayerPositionLabel");
-            label.Text = $"Player: ({playerInstance.Position.X}, {playerInstance.Position.Y})";
-
-            if (Input.IsActionJustPressed("ui_select"))
-            {
-                currentPattern++;
-
-                AddBullet();
-
-                return;
-            }
-
-            moveManager.Update(delta);
-
-            // TODO: physics?
-
-            moveManager.PostUpdate();
+            // TODO: object pooling
+            (child as Node2D)?.QueueFree();
         }
 
-        private void AddBullet()
-        {
-            var label = GetNode<Label>("Control/VBoxContainer/BulletPatternLabel");
-            label.Text = $"Pattern: {myPatterns[currentPattern % myPatterns.Count].Filename}";
-            label.Show();
+        moveManager.Clear();
 
-            // clear out all the bullets
-            foreach (var child in GetChildren())
-            {
-                if (child is Sprite2D)
-                    continue; // HACK: the player
-
-                // TODO: object pooling
-                (child as Node2D)?.QueueFree();
-            }
-
-            moveManager.Clear();
-
-            // add a new bullet in the center of the screen (ish)
-            topLevelBullet = (Mover)moveManager.CreateTopBullet();
-            topLevelBullet.Position = new(
-                GetViewportRect().Size.X / 2f,
-                GetViewportRect().Size.Y / 2f - 100f
-            );
-            topLevelBullet.InitTopNode(myPatterns[currentPattern % myPatterns.Count].RootNode);
-        }
+        // add a new bullet in the center of the screen (ish)
+        topLevelBullet = (Mover)moveManager.CreateTopBullet();
+        topLevelBullet.Position = new(
+            GetViewportRect().Size.X / 2f,
+            GetViewportRect().Size.Y / 2f - 100f
+        );
+        topLevelBullet.InitTopNode(myPatterns[currentPattern % myPatterns.Count].RootNode);
     }
 }

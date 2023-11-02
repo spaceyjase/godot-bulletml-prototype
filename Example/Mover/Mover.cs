@@ -62,10 +62,10 @@ public class Mover : Bullet
         }
     }
 
-    public void Init()
+    public void Init(PackedScene bulletScene)
     {
         ParentNode = Main.Instance;
-        var scene = ResourceLoader.Load<PackedScene>("Bullet.tscn");
+        var scene = ResourceLoader.Load<PackedScene>(bulletScene.ResourcePath);
         BulletNode = scene.Instantiate() as Node2D;
         ParentNode.AddChild(BulletNode);
 

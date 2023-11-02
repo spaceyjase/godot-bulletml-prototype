@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://dq6q7olr1f8y6"]
+[gd_scene load_steps=4 format=3 uid="uid://dq6q7olr1f8y6"]
 
-[ext_resource type="Script" path="res://Main.cs" id="1"]
-[ext_resource type="PackedScene" path="res://Player/Player.tscn" id="2"]
+[ext_resource type="Script" path="res://Example/Main.cs" id="1_5mor0"]
+[ext_resource type="PackedScene" path="res://Example/Player/Player.tscn" id="2_g0iti"]
+[ext_resource type="PackedScene" uid="uid://dwt6hvxay2g66" path="res://Example/Bullet/Bullet.tscn" id="3_vi5kl"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1")
-playerScene = ExtResource("2")
+script = ExtResource("1_5mor0")
+playerScene = ExtResource("2_g0iti")
+bulletScene = ExtResource("3_vi5kl")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3

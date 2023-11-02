@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="bulletml-template"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://Example/Main.tscn"
 config/features=PackedStringArray("4.1", "C#")
 config/icon="res://icon.png"
 

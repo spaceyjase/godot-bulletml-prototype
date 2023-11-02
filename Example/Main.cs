@@ -10,6 +10,9 @@ public partial class Main : Node2D
     [Export]
     private PackedScene playerScene;
 
+    [Export]
+    private PackedScene bulletScene;
+
     // TODO: GameManager/Globals
     public static float ViewportWidth => Instance.GetViewportRect().Size.X;
     public static float ViewportHeight => Instance.GetViewportRect().Size.Y;
@@ -17,7 +20,7 @@ public partial class Main : Node2D
 
     private readonly List<BulletPattern> myPatterns = new();
 
-    private readonly MoveManager moveManager;
+    private MoveManager moveManager;
 
     private int currentPattern;
     private Mover topLevelBullet;
@@ -26,18 +29,19 @@ public partial class Main : Node2D
     public Main()
     {
         Instance = this;
-        moveManager = new(GetPlayerPosition);
     }
 
     private Vector2 GetPlayerPosition()
     {
         return playerInstance?.Position
-               ?? new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
+            ?? new Vector2(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);
     }
 
     public override void _Ready()
     {
         base._Ready();
+
+        moveManager = new(GetPlayerPosition, bulletScene);
 
         GameManager.GameDifficulty = () => 1.0f;
 
@@ -53,7 +57,7 @@ public partial class Main : Node2D
 
         // Add a dummy player sprite
         var scene = ResourceLoader.Load<PackedScene>(playerScene.ResourcePath);
-        if (!(scene.Instantiate() is Sprite2D player))
+        if (scene.Instantiate() is not Sprite2D player)
             return;
         playerInstance = player;
         player.Position = new(GetViewportRect().Size.X / 2f, GetViewportRect().Size.Y - 100f);

@@ -17,11 +17,13 @@ public class MoveManager : IBulletManager
     private readonly List<Mover> topLevelMovers = new();
 
     private readonly PositionDelegate GetPlayerPosition;
+    private readonly PackedScene bulletScene;
 
-    public MoveManager(PositionDelegate playerPosition)
+    public MoveManager(PositionDelegate playerPosition, PackedScene bulletScene)
     {
         Debug.Assert(playerPosition != null);
         GetPlayerPosition = playerPosition;
+        this.bulletScene = bulletScene;
     }
 
     public void Update(float delta)
@@ -81,7 +83,7 @@ public class MoveManager : IBulletManager
         var mover = new Mover(this) { TimeSpeed = timeSpeed, Scale = scale };
 
         //initialize, store in our list, and return the bullet
-        mover.Init();
+        mover.Init(bulletScene);
         movers.Add(mover);
         return mover;
     }
@@ -91,7 +93,7 @@ public class MoveManager : IBulletManager
         var mover = new Mover(this) { TimeSpeed = timeSpeed, Scale = scale };
 
         //initialize, store in our list, and return the bullet
-        mover.Init();
+        mover.Init(bulletScene);
         topLevelMovers.Add(mover);
         return mover;
     }

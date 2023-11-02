@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource path="res://Player/Player.cs" type="Script" id=1]
-[ext_resource path="res://textures.png" type="Texture2D" id=2]
+[ext_resource type="Script" path="res://Example/Player/Player.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://df8yamhadj7jv" path="res://Example/Player/textures.png" id="2"]
+
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 5.0

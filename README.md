@@ -1,6 +1,6 @@
 # godot-bulletml-prototype
 
-Small prototype using bulletml in godot based on bullmllib source found here: <https://github.com/dmanning23/BulletMLLib>
+Small prototype using bulletml in godot based on BulletMLLib source found here: <https://github.com/dmanning23/BulletMLLib>
 
 The original repository relies on the Microsoft Xna Framework. Here, this has been replace with godot native types (e.g. Vector2).
 
